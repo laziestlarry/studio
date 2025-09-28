@@ -65,11 +65,14 @@ const prompt = ai.definePrompt({
   output: {schema: IdentifyPromisingOpportunitiesOutputSchema},
   prompt: `You are an AI assistant designed to identify promising online business opportunities based on a matrix of highest potential, low risk, and quick return. Your goal is to find opportunities that can be launched quickly to go from 'idea to income' in days, not months.
 
-If the user provides context, use that as the primary source for analysis. Perform a comprehensive and thorough analysis of the entire document. Do not stop after finding only one or two opportunities. Otherwise, analyze the provided market trends and user interests to pinpoint ventures with high potential. For each opportunity, evaluate its potential, risk, and the expected time to see a return.
+If the user provides context, use that as the primary source for analysis. Perform a comprehensive and thorough analysis of the entire document. Do not stop after finding only one or two opportunities.
 
 {{#if context}}
-User-Provided Context for Analysis (Primary Source):
+**User-Provided Context for Analysis (Primary Source):**
 {{{context}}}
+
+**Special Instructions for User-Provided Context:**
+If the context contains a list of companies, jobs, or services, treat each item as a potential business opportunity. Analyze each one and frame it as a business model that could be created. For example, if the context lists "Company XYZ: Offers transcription services", you should generate a business opportunity like "Create a Transcription Service Agency leveraging AI". Apply the "Idea to Income" framework below to each item you identify.
 {{/if}}
 {{#if marketTrends}}
 Market Trends: {{{marketTrends}}}

@@ -19,6 +19,7 @@ const IdentifyPromisingOpportunitiesInputSchema = z.object({
   userInterests: z
     .string()
     .describe('Description of the user interests and skills.'),
+  context: z.string().optional().describe('Optional context or data provided by the user for analysis.'),
 });
 export type IdentifyPromisingOpportunitiesInput =
   z.infer<typeof IdentifyPromisingOpportunitiesInputSchema>;
@@ -66,6 +67,10 @@ Analyze the provided market trends and user interests to pinpoint ventures with 
 
 Market Trends: {{{marketTrends}}}
 User Interests: {{{userInterests}}}
+{{#if context}}
+User-Provided Context for Analysis:
+{{{context}}}
+{{/if}}
 
 **Framework for "Idea to Income" Opportunity Discovery:**
 Your suggestions must be actionable and align with the following rapid-execution prompts. The goal is to create lean, high-impact business models.
@@ -87,7 +92,7 @@ Your suggestions must be actionable and align with the following rapid-execution
 - **Subscriptions**: Propose subscription tiers, including free tiers or membership discounts.
 - **Lean Launch**: The ideas must be able to be launched and validated quickly. Avoid ideas that require long development cycles or heavy upfront investment. The user stakeholder is "Lazy Larry" and wants to be an observer/approver.
 
-For each opportunity, synthesize these points into a compelling business case. The final priority score should heavily favor high potential, low risk, and **quick return**.
+For each opportunity, synthesize these points into a compelling business case. The final priority score should heavily favor high potential, low risk, and **quick return**. If the user has provided context, use that as a primary source of inspiration and analysis.
 
 Return the opportunities as a JSON array.
 `,

@@ -17,6 +17,7 @@ const formSchema = z.object({
   marketTrends: z.string().min(10, {
     message: 'Please describe the market trends you have observed in at least 10 characters.',
   }),
+  context: z.string().optional(),
 });
 
 interface OpportunityFormProps {
@@ -30,6 +31,7 @@ export default function OpportunityForm({ onSubmit, isSubmitting }: OpportunityF
     defaultValues: {
       userInterests: '',
       marketTrends: '',
+      context: '',
     },
   });
 
@@ -71,6 +73,23 @@ export default function OpportunityForm({ onSubmit, isSubmitting }: OpportunityF
                     <Textarea
                       placeholder="e.g., 'Growing demand for personalized pet products, rise of AI-powered productivity tools...'"
                       className="resize-y min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="context"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">Paste your data here (optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Paste any relevant data, documents, or thoughts you want the AI to analyze..."
+                      className="resize-y min-h-[200px] font-mono text-xs"
                       {...field}
                     />
                   </FormControl>

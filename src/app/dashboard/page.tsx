@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { analyzeMarketOpportunity } from '@/ai/flows/analyze-market-opportunity';
 import { generateBusinessStructure } from '@/ai/flows/generate-business-structure';
 import { buildAutomatedBusinessStrategy } from '@/ai/flows/build-automated-business-strategy';
-import type { Opportunity, Analysis, Strategy, BusinessStructure } from '@/lib/types';
+import { extractTasksFromStrategy } from '@/ai/flows/extract-tasks-from-strategy';
+import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan } from '@/lib/types';
 import AppHeader from '@/components/app-header';
 import OpportunityDashboard from '@/components/opportunity-dashboard';
 import { OpportunityDashboardSkeleton } from '@/components/opportunity-skeletons';
@@ -19,6 +20,7 @@ export default function DashboardPage() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [structure, setStructure] = useState<BusinessStructure | null>(null);
   const [strategy, setStrategy] = useState<Strategy | null>(null);
+  const [actionPlan, setActionPlan] = useState<ActionPlan | null>(null);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -38,17 +40,21 @@ export default function DashboardPage() {
     setAnalysis(null);
     setStructure(null);
     setStrategy(null);
+    setActionPlan(null);
 
     try {
-      const analysisResult = await analyzeMarketOpportunity({
-        opportunityDescription: opportunity.description,
-      });
+      // Run initial analyses in parallel
+      const [analysisResult, structureResult] = await Promise.all([
+        analyzeMarketOpportunity({
+          opportunityDescription: opportunity.description,
+        }),
+        generateBusinessStructure({
+          opportunityName: opportunity.opportunityName,
+          opportunityDescription: opportunity.description,
+        })
+      ]);
+
       setAnalysis(analysisResult);
-      
-      const structureResult = await generateBusinessStructure({
-        opportunityName: opportunity.opportunityName,
-        opportunityDescription: opportunity.description,
-      });
       setStructure(structureResult);
 
       const marketAnalysisString = `Demand: ${analysisResult.demandForecast}, Competition: ${analysisResult.competitiveLandscape}, Revenue: ${analysisResult.potentialRevenue}`;
@@ -56,6 +62,12 @@ export default function DashboardPage() {
         marketAnalysis: marketAnalysisString,
       });
       setStrategy(strategyResult);
+      
+      const actionPlanResult = await extractTasksFromStrategy({
+        businessStrategy: strategyResult.businessStrategy,
+      });
+      setActionPlan(actionPlanResult);
+
     } catch (error) {
       console.error(error);
       toast({
@@ -79,12 +91,13 @@ export default function DashboardPage() {
       <AppHeader />
       <main className="flex-1 container mx-auto px-4 py-8">
        {(isLoading || !selectedOpportunity) && <OpportunityDashboardSkeleton onBack={handleBackToOpportunities} />}
-       {!isLoading && selectedOpportunity && analysis && structure && strategy && (
+       {!isLoading && selectedOpportunity && analysis && structure && strategy && actionPlan && (
           <OpportunityDashboard
             opportunity={selectedOpportunity}
             analysis={analysis}
             structure={structure}
             strategy={strategy}
+            actionPlan={actionPlan}
             onBack={handleBackToOpportunities}
           />
        )}

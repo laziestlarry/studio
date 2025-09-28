@@ -1,18 +1,22 @@
-import type { Opportunity, Analysis, Strategy, BusinessStructure } from '@/lib/types';
+import { useState } from 'react';
+import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, Task } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ArrowLeft, BarChart3, Bot, BrainCircuit, Building2, Cpu, DollarSign, FileCog, Lightbulb, LineChart, Target, Users } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ArrowLeft, BarChart3, Bot, BrainCircuit, Building2, CheckSquare, Cpu, DollarSign, FileCog, Lightbulb, LineChart, Target, Users } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Progress } from '@/components/ui/progress';
 
 interface OpportunityDashboardProps {
   opportunity: Opportunity;
   analysis: Analysis;
   strategy: Strategy;
   structure: BusinessStructure;
+  actionPlan: ActionPlan;
   onBack: () => void;
 }
 
@@ -32,7 +36,49 @@ const chartConfig = {
   },
 };
 
-export default function OpportunityDashboard({ opportunity, analysis, strategy, structure, onBack }: OpportunityDashboardProps) {
+const TaskItem = ({ task, onToggle }: { task: Task, onToggle: (id: string) => void }) => (
+  <div className="flex items-start gap-4 p-4 border-b">
+    <Checkbox
+      id={`task-${task.id}`}
+      checked={task.completed}
+      onCheckedChange={() => onToggle(task.id)}
+      className="mt-1"
+    />
+    <div className="grid gap-1.5">
+      <label
+        htmlFor={`task-${task.id}`}
+        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      >
+        {task.title}
+      </label>
+      <p className="text-sm text-muted-foreground">{task.description}</p>
+    </div>
+  </div>
+);
+
+
+export default function OpportunityDashboard({ opportunity, analysis, strategy, structure, actionPlan, onBack }: OpportunityDashboardProps) {
+  const [tasks, setTasks] = useState(actionPlan.actionPlan.flatMap(category => category.tasks));
+
+  const handleToggleTask = (id: string) => {
+    setTasks(currentTasks =>
+      currentTasks.map(task =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
+  
+  const completedTasks = tasks.filter(task => task.completed).length;
+  const totalTasks = tasks.length;
+  const progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+  
+  const getCategorizedTasks = () => {
+    return actionPlan.actionPlan.map(category => ({
+      ...category,
+      tasks: category.tasks.map(task => tasks.find(t => t.id === task.id) || task),
+    }));
+  };
+
   return (
     <div className="animate-in fade-in-50 duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
@@ -53,7 +99,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
       </div>
 
       <Tabs defaultValue="analysis" className="w-full">
-        <TabsList className="grid w-full grid-cols-1 md:w-[600px] md:grid-cols-3">
+        <TabsList className="grid w-full grid-cols-1 md:w-auto md:grid-cols-4">
           <TabsTrigger value="analysis">
             <LineChart className="mr-2 h-4 w-4" /> Market Analysis
           </TabsTrigger>
@@ -62,6 +108,9 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
           </TabsTrigger>
           <TabsTrigger value="strategy">
             <BrainCircuit className="mr-2 h-4 w-4" /> Business Strategy
+          </TabsTrigger>
+          <TabsTrigger value="action-plan">
+            <CheckSquare className="mr-2 h-4 w-4" /> Action Plan
           </TabsTrigger>
         </TabsList>
         <TabsContent value="analysis" className="mt-6">
@@ -225,6 +274,46 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
               </CardContent>
             </Card>
            </div>
+        </TabsContent>
+         <TabsContent value="action-plan" className="mt-6">
+          <div className="space-y-6">
+            <Alert>
+              <Lightbulb className="h-4 w-4" />
+              <AlertTitle>Actionable Steps</AlertTitle>
+              <AlertDescription>
+                This is your AI-generated to-do list. Check off tasks as you complete them to track your progress towards launching your business.
+              </AlertDescription>
+            </Alert>
+            <Card>
+              <CardHeader>
+                <CardTitle className="font-headline">Implementation Progress</CardTitle>
+                <div className="flex items-center gap-4 pt-2">
+                  <Progress value={progressPercentage} className="w-full" />
+                  <span className="text-sm font-semibold text-muted-foreground whitespace-nowrap">
+                    {completedTasks} / {totalTasks} Tasks
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <Accordion type="multiple" defaultValue={getCategorizedTasks().map(c => c.categoryTitle)}>
+                  {getCategorizedTasks().map(category => (
+                    <AccordionItem key={category.categoryTitle} value={category.categoryTitle}>
+                      <AccordionTrigger className="px-6 text-lg font-semibold">
+                        {category.categoryTitle}
+                      </AccordionTrigger>
+                      <AccordionContent className="p-0">
+                        <div className="border-t">
+                          {category.tasks.map(task => (
+                            <TaskItem key={task.id} task={task} onToggle={handleToggleTask} />
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

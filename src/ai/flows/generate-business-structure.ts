@@ -21,6 +21,16 @@ export type GenerateBusinessStructureInput = z.infer<
   typeof GenerateBusinessStructureInputSchema
 >;
 
+const OKRSchema = z.object({
+    objective: z.string().describe("The high-level objective."),
+    keyResults: z.array(z.string()).describe("The key results to measure the objective's success."),
+});
+
+const KPISchema = z.object({
+    kpi: z.string().describe("The Key Performance Indicator."),
+    target: z.string().describe("The target value for the KPI."),
+});
+
 const CLevelRoleSchema = z.object({
   role: z.string().describe('The C-level title (e.g., CEO, CFO, COO).'),
   description: z
@@ -69,6 +79,7 @@ const DepartmentSchema = z.object({
     .describe(
       'A list of AI personas that constitute the staff of this department.'
     ),
+    kpis: z.array(KPISchema).describe("Key Performance Indicators for this department."),
 });
 
 const ProjectManagementPhaseSchema = z.object({
@@ -86,6 +97,7 @@ const GenerateBusinessStructureOutputSchema = z.object({
   cLevelBoard: z
     .array(CLevelRoleSchema)
     .describe('The C-level executive board responsible for top-level decisions.'),
+  okrs: z.array(OKRSchema).describe("Corporate Objectives and Key Results (OKRs)."),
   advisoryCouncil: z
     .array(AdvisoryRoleSchema)
     .describe(
@@ -129,18 +141,18 @@ The structure must be comprehensive and hierarchical, designed for maximum effic
 
 Design the following components:
 1.  **Multi-Layered Commander**: The ultimate strategic authority. Describe this role's function.
-2.  **C-Level Board**: Define a board of C-level executives (CEO, CFO, COO, CMO, CPO). Describe the primary responsibility of each role.
+2.  **C-Level Board & OKRs**: Define a board of C-level executives (CEO, CFO, COO, CMO, CPO). Describe their responsibilities. Also, define 2-3 high-level corporate **OKRs** (Objectives and Key Results) that this board will be responsible for.
 3.  **Advisory Council**: Create a panel of AI consultants (e.g., Legal, Debater, Philosopher, Audit) that advise the leadership. Describe their function.
 4.  **AI-Core Base**: Describe the central AI system that manages, automates, and orchestrates tasks across the entire organization.
-5.  **AI-Powered Departments**: Define a set of foundational departments. For each:
-    - Describe its primary function.
-    - Detail how the AI-Core automates its operations.
-    - Create a list of AI Personas (staff) within the department, including their role (e.g., Manager, Executive) and a brief on their persona/duties.
+5.  **AI-Powered Departments & KPIs**: Define a set of foundational departments. For each:
+    - Describe its primary function and AI integration.
+    - Create a list of AI Personas (staff).
+    - Define 2-3 specific **KPIs** (Key Performance Indicators) for each department that align with the corporate OKRs.
 6.  **Project Management Framework**:
     - State the methodology (e.g., a hybrid of Prince-2 and Agile).
-    - Outline the key phases for realizing the business plan: Initiation, Development, Establishment, Activation, Execution, and Control for sustainable growth. For each phase, describe its goals and list key activities.
+    - Outline the key phases for realizing the business plan: Initiation, Development, Establishment, Activation, Execution, and Control for sustainable growth.
 
-The goal is to create a self-improving, agile organization that ensures delivery perfection, achieves financial goals, and can dominate its market settlement through highly orchestrated, automated workflows.
+The goal is to create a self-improving, agile organization that ensures delivery perfection, achieves financial goals, and can dominate its market through highly orchestrated, automated workflows.
 `,
 });
 

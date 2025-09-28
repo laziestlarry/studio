@@ -11,14 +11,14 @@ import { Loader2 } from 'lucide-react';
 import type { IdentifyPromisingOpportunitiesInput } from '@/ai/flows/identify-promising-opportunities';
 
 const formSchema = z.object({
-  userInterests: z.string().min(10, {
-    message: 'Please describe your interests and skills in at least 10 characters.',
-  }),
-  marketTrends: z.string().min(10, {
-    message: 'Please describe the market trends you have observed in at least 10 characters.',
-  }),
+  userInterests: z.string().optional(),
+  marketTrends: z.string().optional(),
   context: z.string().optional(),
+}).refine(data => !!data.userInterests || !!data.marketTrends || !!data.context, {
+  message: "Please fill out at least one field to get started.",
+  path: ["userInterests"], // Show error under the first field
 });
+
 
 interface OpportunityFormProps {
   onSubmit: (data: IdentifyPromisingOpportunitiesInput) => void;
@@ -51,7 +51,7 @@ export default function OpportunityForm({ onSubmit, isSubmitting }: OpportunityF
               name="userInterests"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base">Your Interests & Skills</FormLabel>
+                  <FormLabel className="text-base">Your Interests & Skills (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="e.g., 'Passionate about sustainable fashion, skilled in digital marketing and graphic design...'"
@@ -68,7 +68,7 @@ export default function OpportunityForm({ onSubmit, isSubmitting }: OpportunityF
               name="marketTrends"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base">Observed Market Trends</FormLabel>
+                  <FormLabel className="text-base">Observed Market Trends (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="e.g., 'Growing demand for personalized pet products, rise of AI-powered productivity tools...'"

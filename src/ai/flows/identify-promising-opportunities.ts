@@ -15,10 +15,12 @@ import {z} from 'genkit';
 const IdentifyPromisingOpportunitiesInputSchema = z.object({
   marketTrends: z
     .string()
-    .describe('Description of current market trends and emerging technologies.'),
+    .describe('Description of current market trends and emerging technologies.')
+    .optional(),
   userInterests: z
     .string()
-    .describe('Description of the user interests and skills.'),
+    .describe('Description of the user interests and skills.')
+    .optional(),
   context: z.string().optional().describe('Optional context or data provided by the user for analysis.'),
 });
 export type IdentifyPromisingOpportunitiesInput =
@@ -63,13 +65,17 @@ const prompt = ai.definePrompt({
   output: {schema: IdentifyPromisingOpportunitiesOutputSchema},
   prompt: `You are an AI assistant designed to identify promising online business opportunities based on a matrix of highest potential, low risk, and quick return. Your goal is to find opportunities that can be launched quickly to go from 'idea to income' in days, not months.
 
-Analyze the provided market trends and user interests to pinpoint ventures with high potential. For each opportunity, evaluate its potential, risk, and the expected time to see a return.
+If the user provides context, use that as the primary source for analysis. Otherwise, analyze the provided market trends and user interests to pinpoint ventures with high potential. For each opportunity, evaluate its potential, risk, and the expected time to see a return.
 
-Market Trends: {{{marketTrends}}}
-User Interests: {{{userInterests}}}
 {{#if context}}
-User-Provided Context for Analysis:
+User-Provided Context for Analysis (Primary Source):
 {{{context}}}
+{{/if}}
+{{#if marketTrends}}
+Market Trends: {{{marketTrends}}}
+{{/if}}
+{{#if userInterests}}
+User Interests: {{{userInterests}}}
 {{/if}}
 
 **Framework for "Idea to Income" Opportunity Discovery:**

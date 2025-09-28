@@ -16,6 +16,7 @@ const TaskSchema = z.object({
   title: z.string().describe('A short, descriptive title for the task.'),
   description: z.string().describe('A more detailed description of the task and what it entails.'),
   completed: z.boolean().describe('Whether the task has been completed.'),
+  humanContribution: z.string().describe('Description of the human involvement required for this task (e.g., "Final approval", "Content review", "No human input required").'),
 });
 
 const TaskCategorySchema = z.object({
@@ -36,6 +37,10 @@ export type ExtractTasksFromStrategyInput = z.infer<
 
 const ExtractTasksFromStrategyOutputSchema = z.object({
   actionPlan: z.array(TaskCategorySchema).describe('A structured action plan with categories and tasks.'),
+  criticalPath: z.object({
+    taskTitle: z.string().describe('The title of the task that is on the critical path.'),
+    timeEstimate: z.string().describe('The estimated time range for the critical path task (e.g., "2-3 weeks").')
+  }).describe('The task estimated to be on the critical path and its time estimate.')
 });
 export type ExtractTasksFromStrategyOutput = z.infer<
   typeof ExtractTasksFromStrategyOutputSchema
@@ -55,12 +60,16 @@ const prompt = ai.definePrompt({
 
 For each major section of the strategy (Marketing, Operations, Financials), create a category and then extract specific, actionable tasks. Each task should have a clear title and a description of what needs to be done. Ensure each task has a unique ID and is initially marked as not completed.
 
+For each task, also specify the 'humanContribution' needed. This could range from 'Final approval' to 'Content creation and review' to 'No human input required' for fully automated tasks.
+
+Finally, identify the single task that represents the critical path—the one that will likely take the longest and determine the earliest project completion date. Provide a 'timeEstimate' for this critical path task.
+
 Business Strategy:
 - Marketing Tactics: {{{businessStrategy.marketingTactics}}}
 - Operational Workflows: {{{businessStrategy.operationalWorkflows}}}
 - Financial Forecasts: {{{businessStrategy.financialForecasts}}}
 
-Generate a structured action plan from this strategy.
+Generate a structured action plan from this strategy, including the critical path analysis.
 `,
 });
 

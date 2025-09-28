@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, BarChart3, Bot, BrainCircuit, Building2, CheckSquare, Cpu, DollarSign, FileCog, Gavel, Lightbulb, LineChart, Milestone, Scale, Search, ShieldQuestion, Target, User, Users, Users2 } from 'lucide-react';
+import { ArrowLeft, BarChart3, Bot, BrainCircuit, Building2, CheckSquare, Clock, Cpu, DollarSign, FileCog, Gavel, Lightbulb, LineChart, Milestone, Scale, Search, ShieldQuestion, Target, User, Users, Users2 } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Progress } from '@/components/ui/progress';
@@ -44,7 +44,7 @@ const TaskItem = ({ task, onToggle }: { task: Task, onToggle: (id: string) => vo
       onCheckedChange={() => onToggle(task.id)}
       className="mt-1"
     />
-    <div className="grid gap-1.5">
+    <div className="grid gap-1.5 flex-1">
       <label
         htmlFor={`task-${task.id}`}
         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -52,6 +52,13 @@ const TaskItem = ({ task, onToggle }: { task: Task, onToggle: (id: string) => vo
         {task.title}
       </label>
       <p className="text-sm text-muted-foreground">{task.description}</p>
+      {task.humanContribution && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
+            <User className="h-3 w-3 text-accent"/>
+            <strong>Human Contribution:</strong>
+            <span>{task.humanContribution}</span>
+        </div>
+      )}
     </div>
   </div>
 );
@@ -378,6 +385,13 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
               <AlertDescription>
                 This is your AI-generated to-do list. Check off tasks as you complete them to track your progress towards launching your business.
               </AlertDescription>
+            </Alert>
+             <Alert variant="destructive">
+                <Clock className="h-4 w-4" />
+                <AlertTitle>Critical Path Estimate</AlertTitle>
+                <AlertDescription>
+                    The AI has identified <strong>`{actionPlan.criticalPath.taskTitle}`</strong> as the most time-consuming task, with an estimated duration of <strong>{actionPlan.criticalPath.timeEstimate}</strong>. Prioritizing this will be key to timely project completion.
+                </AlertDescription>
             </Alert>
             <Card>
               <CardHeader>

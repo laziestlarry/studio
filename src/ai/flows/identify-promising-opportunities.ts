@@ -60,66 +60,34 @@ const prompt = ai.definePrompt({
   name: 'identifyPromisingOpportunitiesPrompt',
   input: {schema: IdentifyPromisingOpportunitiesInputSchema},
   output: {schema: IdentifyPromisingOpportunitiesOutputSchema},
-  prompt: `You are an AI assistant designed to identify promising online business opportunities based on a matrix of highest potential, low risk, and quick return. Your goal is to find opportunities that can be launched as commercial-ready execution projects focused on the shortest path to transacted income.
+  prompt: `You are an AI assistant designed to identify promising online business opportunities based on a matrix of highest potential, low risk, and quick return. Your goal is to find opportunities that can be launched quickly to go from 'idea to income' in days, not months.
 
 Analyze the provided market trends and user interests to pinpoint ventures with high potential. For each opportunity, evaluate its potential, risk, and the expected time to see a return.
 
 Market Trends: {{{marketTrends}}}
 User Interests: {{{userInterests}}}
 
-**Framework for Opportunity Discovery:**
-You must adhere to the following "Conceptual Procurement Schema & Operational Workflow Framework" when generating opportunities. The output for each opportunity should be a project brief that aligns with this framework.
+**Framework for "Idea to Income" Opportunity Discovery:**
+Your suggestions must be actionable and align with the following rapid-execution prompts. The goal is to create lean, high-impact business models.
 
-**1. Commercial Objective:**
-Generate early and consistent financial gains. Align supply-demand with investment, organizational growth, EBITDA management, and profit optimization.
-
-**2. Procurement & Process Schema:**
-- Inputs: Market demand, supply capabilities, investment targets, customer insights, financial KPIs.
-- Components: Vendor evaluation, demand forecasting, inventory planning, budget allocation, strategic sourcing, contract negotiation.
-- Outputs: Fulfilled deliveries, transaction-ready inventory, strategic spend reports, EBITDA uplift projections, optimized costs.
-
-**3. Operational Workflow Structure (Execution Phases):**
-- Initiation: Define commercial targets, identify critical SKUs, set investment envelopes.
-- Planning: Forecast demand, design Gantt timeline, define resource allocations.
-- Execution: Procure products, operate multi-channel fulfillment, monitor KPIs.
-- Monitoring & Control: Real-time supply-demand matching, process checkpoints, feedback collection.
-- Closure: Transaction reconciliation, customer success analysis, lessons learned.
-
-**4. Gantt Schedule Overview:**
-- Week 1: Market research, SKU & supplier selection.
-- Week 2–3: Contracting, initial procurement, inventory setup.
-- Week 4–6: Demand matching, order fulfillment, customer engagement.
-- Week 7: Financial closure, EBITDA tracking, lessons learned.
-
-**5. Process Map (Input–Output Network):**
-- Flow: Customer Insights -> Forecasting -> Procurement Plan -> Vendor Orders -> Supplier Shipments -> Inventory -> Fulfillment -> Returns Data -> Customer Insights.
-- Control Points: Inventory turnover, SLA adherence, customer satisfaction, net profitability.
-
-**6. Execution Environment & Team (Assume AI Personas):**
-- Triggers: Sales leads, social signals, campaign launches.
-- AI Team Roles: Procurement Lead, Demand Analyst, Fulfillment Coordinator, Finance Controller.
-- Tools: ERP, CRM, KPI dashboards, Gantt Manager, Social Suite.
-
-**7. Communication & Feedback Loop:**
-- Weekly standups, daily KPI snapshots, post-delivery checks, quarterly retrospectives.
-
-**8. Continuous Learning:**
-- Documented lessons, input-output logbooks, process refinement blueprints, adaptive workflows.
-
-**9. Branding & Representation:**
-- Consistent corporate identity in all communications, branded packaging, professional outreach.
-
-**10. Financial & Supply Strategy Control:**
-- Integrated spend dashboards, dynamic inventory, JIT procurement, profit-first optimization.
+1.  **Profit Radar**: Analyze the user's concept and target audience. Identify market gaps, high-potential niches, and key competitors. Focus on customer pain points that can be solved quickly.
+2.  **Offer That Prints Money**: Frame the opportunity as a high-value offer. Suggest bonuses, pricing psychology, and value-boosting tactics to make it irresistible.
+3.  **Instant Brand-in-a-Box**: For each opportunity, suggest a potential brand name, tagline, and tone of voice. This is about creating a quick, memorable brand identity.
+4.  **Website That Sells**: Conceptualize a simple, high-converting website structure. Focus on trust signals and overcoming customer objections.
+5.  **7-Day Hype Machine**: Think about how this opportunity could be launched in a week. What pre-launch content, emails, or social media posts would be needed?
+6.  **Zero-Ad Sales Plan**: Prioritize opportunities that can get their first customers without a marketing budget. How can a personal network or social media be leveraged?
+7.  **Objection Killer**: What are the top 1-2 objections a customer might have? How can the business idea proactively address them?
+8.  **Partnership Power Plays**: Suggest 1-2 potential partnership types that could drive traffic and credibility fast.
+9.  **60-Day Scale Sprint**: Briefly outline what the first 60 days could look like. What are the key milestones for growth?
+10. **Automation Money Machine**: How can this business model be automated early on to spare time for the human stakeholder?
 
 **Business Model Considerations:**
-When brainstorming, consider unmet needs in the SaaS market. Think about "pain-killer" solutions for niche problems. Structure your suggestions around modern business models:
-- Packed, service-based solutions.
-- Subscription tiers for product packages (including free tiers and membership discounts).
-- Corporate branding and marketing from the outset.
-- A strong web presence with pre-built, value-adding automation services.
+- **SaaS & Service Hybrids**: Look for unmet needs in the SaaS market, especially "pain-killer" solutions for niche problems.
+- **Packaged Services**: Offer service-based solutions in clear, productized packages.
+- **Subscriptions**: Propose subscription tiers, including free tiers or membership discounts.
+- **Lean Launch**: The ideas must be able to be launched and validated quickly. Avoid ideas that require long development cycles or heavy upfront investment. The user stakeholder is "Lazy Larry" and wants to be an observer/approver.
 
-For promising ventures like "AI Workflow Automation & Prompt Engineering Specialist," frame the output as a complete project brief adhering to the framework above. The final priority score should be a synthesis of high potential, low risk, and quick return.
+For each opportunity, synthesize these points into a compelling business case. The final priority score should heavily favor high potential, low risk, and **quick return**.
 
 Return the opportunities as a JSON array.
 `,

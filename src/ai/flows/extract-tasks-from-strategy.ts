@@ -40,7 +40,7 @@ const ExtractTasksFromStrategyOutputSchema = z.object({
   actionPlan: z.array(TaskCategorySchema).describe('A structured action plan with categories and tasks.'),
   criticalPath: z.object({
     taskTitle: z.string().describe('The title of the task that is on the critical path.'),
-    timeEstimate: z.string().describe('The estimated time range for the critical path task (e.g., "2-3 weeks").')
+    timeEstimate: z.string().describe('The estimated time range for the critical path task (e.g., "2-3 days", "1 week").')
   }).describe('The task estimated to be on the critical path and its time estimate.')
 });
 export type ExtractTasksFromStrategyOutput = z.infer<
@@ -57,22 +57,22 @@ const prompt = ai.definePrompt({
   name: 'extractTasksFromStrategyPrompt',
   input: {schema: ExtractTasksFromStrategyInputSchema},
   output: {schema: ExtractTasksFromStrategyOutputSchema},
-  prompt: `You are an expert project manager AI. Your job is to take a high-level business strategy and break it down into a concrete, actionable task list designed for maximum automation. The human stakeholder prefers to be in an observer/approver role.
+  prompt: `You are an expert project manager AI. Your job is to take a high-level business strategy and break it down into a concrete, actionable task list designed for maximum automation and rapid execution. The human stakeholder ("Lazy Larry") prefers to be in an observer/approver role.
 
 For each major section of the strategy (Marketing, Operations, Financials), create a category and then extract specific, actionable tasks. Each task should have a clear title and a description of what needs to be done. Ensure each task has a unique ID and is initially marked as not completed.
 
 For each task:
-1.  **Human Contribution**: Specify the 'humanContribution' needed. Assume the human is "Lazy Larry" and prefers to only monitor status or provide final approval. Examples: "Monitor campaign performance via dashboard," "Final approval for budget allocation," "Strategic sign-off on branding."
-2.  **Prioritization**: Assign a 'priority' (High, Medium, Low) based on an Eisenhower Matrix. High priority should be for tasks that are both urgent and important for moving the project forward.
+1.  **Human Contribution**: Specify the 'humanContribution' needed. Frame it for "Lazy Larry." Focus on monitoring and approval. Examples: "Monitor campaign performance via dashboard," "Final approval for budget allocation," "Review and approve final branding."
+2.  **Prioritization**: Assign a 'priority' (High, Medium, Low) based on an Eisenhower Matrix (urgency and importance). High priority tasks should be those that are critical for a fast launch.
 
-Finally, identify the single task that represents the **critical path**—the one that will likely take the longest and determine the earliest project completion date. Provide a 'timeEstimate' for this critical path task with a large, conservative time range.
+Finally, identify the single task that represents the **critical path** for the quickest possible launch. This should be the task that, if delayed, would delay the entire launch. Provide a 'timeEstimate' for this task in **days or weeks**, not months. Keep the estimate optimistic and focused on speed.
 
 Business Strategy:
 - Marketing Tactics: {{{businessStrategy.marketingTactics}}}
 - Operational Workflows: {{{businessStrategy.operationalWorkflows}}}
 - Financial Forecasts: {{{businessStrategy.financialForecasts}}}
 
-Generate a structured action plan from this strategy, including the critical path analysis.
+Generate a structured action plan from this strategy, including the critical path analysis for a rapid launch.
 `,
 });
 

@@ -67,6 +67,22 @@ Analyze the provided market trends and user interests to pinpoint ventures with 
 Market Trends: {{{marketTrends}}}
 User Interests: {{{userInterests}}}
 
+**Business Model Considerations:**
+When brainstorming, consider unmet needs in the SaaS market. Think about "pain-killer" solutions for niche problems.
+Structure your suggestions around modern business models:
+- Packed, service-based solutions.
+- Subscription tiers for product packages (including free tiers and membership discounts).
+- Corporate branding and marketing from the outset.
+- A strong web presence with pre-built, value-adding automation services.
+
+**Project Development Framework:**
+For promising ventures like "AI Workflow Automation & Prompt Engineering Specialist," frame the output as a project brief.
+This brief should align with a phased project management approach:
+1.  **Initiation**: Define boundaries, assemble the PMO team, configure reporting.
+2.  **Execution & Control**: Operate within defined tolerances, manage the project.
+3.  **Closure & Growth**: Capture lessons learned for CI/CD, transition to a sustainable lifecycle, and manage growth.
+Success is measured by governance, market dominance, quality delivery, financial gains, and commercial achievements (customer satisfaction, brand loyalty).
+
 Consider various online business models, including but not limited to: side-hustles, passive income generators, freelance performance portals, dropshipping e-commerce traders, and social media management.
 
 The final priority score should be a synthesis of these factors: high potential, low risk, and quick return should result in a higher priority.

@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { identifyPromisingOpportunities } from '@/ai/flows/identify-promising-opportunities';
 import { analyzeMarketOpportunity } from '@/ai/flows/analyze-market-opportunity';
+import { generateBusinessStructure } from '@/ai/flows/generate-business-structure';
 import { buildAutomatedBusinessStrategy } from '@/ai/flows/build-automated-business-strategy';
 import type { IdentifyPromisingOpportunitiesInput } from '@/ai/flows/identify-promising-opportunities';
-import type { Opportunity, Analysis, Strategy } from '@/lib/types';
+import type { Opportunity, Analysis, Strategy, BusinessStructure } from '@/lib/types';
 
 import AppHeader from '@/components/app-header';
 import OpportunityForm from '@/components/opportunity-form';
@@ -21,6 +22,7 @@ export default function Home() {
   const [opportunities, setOpportunities] = useState<Opportunity[] | null>(null);
   const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [structure, setStructure] = useState<BusinessStructure | null>(null);
   const [strategy, setStrategy] = useState<Strategy | null>(null);
 
   const { toast } = useToast();
@@ -57,6 +59,7 @@ export default function Home() {
     setIsLoading(true);
     setSelectedOpportunity(opportunity);
     setAnalysis(null);
+    setStructure(null);
     setStrategy(null);
 
     try {
@@ -64,6 +67,12 @@ export default function Home() {
         opportunityDescription: opportunity.description,
       });
       setAnalysis(analysisResult);
+      
+      const structureResult = await generateBusinessStructure({
+        opportunityName: opportunity.opportunityName,
+        opportunityDescription: opportunity.description,
+      });
+      setStructure(structureResult);
 
       const marketAnalysisString = `Demand: ${analysisResult.demandForecast}, Competition: ${analysisResult.competitiveLandscape}, Revenue: ${analysisResult.potentialRevenue}`;
       const strategyResult = await buildAutomatedBusinessStrategy({
@@ -88,6 +97,7 @@ export default function Home() {
     setSelectedOpportunity(null);
     setAnalysis(null);
     setStrategy(null);
+    setStructure(null);
   };
   
   const handleBackToForm = () => {
@@ -104,11 +114,12 @@ export default function Home() {
         return <OpportunityDashboardSkeleton opportunity={selectedOpportunity} onBack={handleBackToOpportunities} />;
     }
 
-    if (selectedOpportunity && analysis && strategy) {
+    if (selectedOpportunity && analysis && structure && strategy) {
       return (
         <OpportunityDashboard
           opportunity={selectedOpportunity}
           analysis={analysis}
+          structure={structure}
           strategy={strategy}
           onBack={handleBackToOpportunities}
         />

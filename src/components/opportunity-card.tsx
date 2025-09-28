@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, TrendingUp, ShieldAlert } from 'lucide-react';
+import { ArrowRight, TrendingUp, ShieldAlert, Zap } from 'lucide-react';
 import type { Opportunity } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
@@ -33,7 +33,7 @@ const getImageForOpportunity = (name: string) => {
 };
 
 export default function OpportunityCard({ opportunity, onSelect }: OpportunityCardProps) {
-  const { opportunityName, description, potential, risk, priority } = opportunity;
+  const { opportunityName, description, potential, risk, quickReturn, priority } = opportunity;
   const placeholder = getImageForOpportunity(opportunityName);
 
   const priorityValue = parseInt(priority, 10);
@@ -74,6 +74,13 @@ export default function OpportunityCard({ opportunity, onSelect }: OpportunityCa
           <div>
             <h4 className="font-semibold">Risk</h4>
             <p className="text-sm text-muted-foreground">{risk}</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-3">
+          <Zap className="h-5 w-5 mt-1 text-accent shrink-0" />
+          <div>
+            <h4 className="font-semibold">Quick Return</h4>
+            <p className="text-sm text-muted-foreground">{quickReturn}</p>
           </div>
         </div>
       </CardContent>

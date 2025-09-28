@@ -30,12 +30,17 @@ const OpportunitySchema = z.object({
   description: z.string().describe('A short description of the business.'),
   potential: z
     .string()
-    .describe('An assessment of the opportunities potential.'),
-  risk: z.string().describe('An assessment of the risks involved.'),
+    .describe('An assessment of the opportunities potential, considering financial upside and market size.'),
+  risk: z
+    .string()
+    .describe('An assessment of the risks involved, including market, execution, and financial risks.'),
+  quickReturn: z
+    .string()
+    .describe('An assessment of how quickly a return on investment can be expected (e.g., Short, Medium, Long term).'),
   priority: z
     .string()
     .describe(
-      'A priority score, from 1-10, of which opportunity to pursue first.'
+      'A priority score, from 1-10, of which opportunity to pursue first. This should be a synthesis of potential, risk, and quick return.'
     ),
 });
 
@@ -55,14 +60,16 @@ const prompt = ai.definePrompt({
   name: 'identifyPromisingOpportunitiesPrompt',
   input: {schema: IdentifyPromisingOpportunitiesInputSchema},
   output: {schema: IdentifyPromisingOpportunitiesOutputSchema},
-  prompt: `You are an AI assistant designed to identify promising online business opportunities based on market trends and user interests.
+  prompt: `You are an AI assistant designed to identify promising online business opportunities based on a matrix of highest potential, low risk, and quick return.
 
-Analyze the provided market trends and user interests to pinpoint ventures with high potential, assessing market gaps and emerging trends.
+Analyze the provided market trends and user interests to pinpoint ventures with high potential. For each opportunity, evaluate its potential, risk, and the expected time to see a return.
 
 Market Trends: {{{marketTrends}}}
 User Interests: {{{userInterests}}}
 
 Consider various online business models, including but not limited to: side-hustles, passive income generators, freelance performance portals, dropshipping e-commerce traders, and social media management.
+
+The final priority score should be a synthesis of these factors: high potential, low risk, and quick return should result in a higher priority.
 
 Return the opportunities as a JSON array.
 `,

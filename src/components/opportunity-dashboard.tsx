@@ -1,10 +1,10 @@
-import type { Opportunity, Analysis, Strategy } from '@/lib/types';
+import type { Opportunity, Analysis, Strategy, BusinessStructure } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ArrowLeft, BarChart3, Bot, BrainCircuit, DollarSign, FileCog, Lightbulb, LineChart, Target, Users } from 'lucide-react';
+import { ArrowLeft, BarChart3, Bot, BrainCircuit, Building2, Cpu, DollarSign, FileCog, Lightbulb, LineChart, Target, Users } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
@@ -12,6 +12,7 @@ interface OpportunityDashboardProps {
   opportunity: Opportunity;
   analysis: Analysis;
   strategy: Strategy;
+  structure: BusinessStructure;
   onBack: () => void;
 }
 
@@ -31,7 +32,7 @@ const chartConfig = {
   },
 };
 
-export default function OpportunityDashboard({ opportunity, analysis, strategy, onBack }: OpportunityDashboardProps) {
+export default function OpportunityDashboard({ opportunity, analysis, strategy, structure, onBack }: OpportunityDashboardProps) {
   return (
     <div className="animate-in fade-in-50 duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
@@ -52,9 +53,12 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
       </div>
 
       <Tabs defaultValue="analysis" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:w-[400px]">
+        <TabsList className="grid w-full grid-cols-1 md:w-[600px] md:grid-cols-3">
           <TabsTrigger value="analysis">
             <LineChart className="mr-2 h-4 w-4" /> Market Analysis
+          </TabsTrigger>
+          <TabsTrigger value="structure">
+            <Building2 className="mr-2 h-4 w-4" /> Org Structure
           </TabsTrigger>
           <TabsTrigger value="strategy">
             <BrainCircuit className="mr-2 h-4 w-4" /> Business Strategy
@@ -114,6 +118,63 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+        <TabsContent value="structure" className="mt-6">
+            <div className="space-y-6">
+                 <Alert>
+                    <Lightbulb className="h-4 w-4" />
+                    <AlertTitle>Organizational Blueprint</AlertTitle>
+                    <AlertDescription>
+                        This is an AI-generated organizational structure designed for automation and efficiency. Use this as a guide to build your team and workflows.
+                    </AlertDescription>
+                </Alert>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-3 font-headline">
+                            <Users className="h-6 w-6 text-primary" />
+                            Multi-Layered Commander
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground">{structure.commander}</p>
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-3 font-headline">
+                            <Cpu className="h-6 w-6 text-primary" />
+                            AI-Core Base
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground">{structure.aiCore}</p>
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle className="font-headline">AI-Powered Departments</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Accordion type="single" collapsible defaultValue="item-0">
+                            {structure.departments.map((dept, index) => (
+                                <AccordionItem key={index} value={`item-${index}`}>
+                                    <AccordionTrigger className="text-lg font-semibold">{dept.name}</AccordionTrigger>
+                                    <AccordionContent className="pt-2 text-base space-y-4">
+                                        <div>
+                                            <h4 className="font-semibold text-foreground mb-1">Function</h4>
+                                            <p className="text-muted-foreground whitespace-pre-line">{dept.function}</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-foreground mb-1">AI Integration</h4>
+                                            <p className="text-muted-foreground whitespace-pre-line">{dept.aiIntegration}</p>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                    </CardContent>
+                </Card>
+            </div>
         </TabsContent>
         <TabsContent value="strategy" className="mt-6">
            <div className="space-y-6">

@@ -6,9 +6,10 @@ import { ArrowRight, TrendingUp, ShieldAlert, Zap } from 'lucide-react';
 import type { Opportunity } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
+import { RankedOpportunity } from '@/app/opportunities/page';
 
 interface OpportunityCardProps {
-  opportunity: Opportunity;
+  opportunity: Opportunity | RankedOpportunity;
   onSelect: () => void;
 }
 
@@ -35,6 +36,7 @@ const getImageForOpportunity = (name: string) => {
 export default function OpportunityCard({ opportunity, onSelect }: OpportunityCardProps) {
   const { opportunityName, description, potential, risk, quickReturn, priority } = opportunity;
   const placeholder = getImageForOpportunity(opportunityName);
+  const isRanked = 'rank' in opportunity;
 
   const priorityValue = parseInt(priority, 10);
   const priorityColor =
@@ -43,6 +45,10 @@ export default function OpportunityCard({ opportunity, onSelect }: OpportunityCa
       : priorityValue >= 5
       ? 'bg-yellow-500 hover:bg-yellow-600'
       : 'bg-red-500 hover:bg-red-600';
+
+  const rankColor = isRanked && (opportunity as RankedOpportunity).rank <= 3
+      ? 'bg-primary hover:bg-primary/90'
+      : 'bg-secondary hover:bg-secondary/80 text-secondary-foreground';
 
   return (
     <Card className="flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl">
@@ -57,9 +63,19 @@ export default function OpportunityCard({ opportunity, onSelect }: OpportunityCa
               data-ai-hint={placeholder.imageHint}
             />
           )}
+           {isRanked && (
+            <Badge className={cn("absolute top-2 right-2 text-lg", rankColor)}>
+              #{(opportunity as RankedOpportunity).rank}
+            </Badge>
+          )}
         </div>
         <CardTitle className="font-headline text-xl">{opportunityName}</CardTitle>
         <CardDescription>{description}</CardDescription>
+        {isRanked && (opportunity as RankedOpportunity).rationale && (
+            <CardDescription className="text-xs italic pt-2">
+                <strong>Rationale:</strong> {(opportunity as RankedOpportunity).rationale}
+            </CardDescription>
+        )}
       </CardHeader>
       <CardContent className="flex-grow space-y-4">
         <div className="flex items-start gap-3">

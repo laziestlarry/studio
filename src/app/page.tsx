@@ -2,46 +2,37 @@
 
 import { useState } from 'react';
 import { identifyPromisingOpportunities } from '@/ai/flows/identify-promising-opportunities';
-import { analyzeMarketOpportunity } from '@/ai/flows/analyze-market-opportunity';
-import { generateBusinessStructure } from '@/ai/flows/generate-business-structure';
-import { buildAutomatedBusinessStrategy } from '@/ai/flows/build-automated-business-strategy';
 import type { IdentifyPromisingOpportunitiesInput } from '@/ai/flows/identify-promising-opportunities';
-import type { Opportunity, Analysis, Strategy, BusinessStructure } from '@/lib/types';
+import type { Opportunity } from '@/lib/types';
+import { useRouter } from 'next/navigation';
 
 import AppHeader from '@/components/app-header';
 import OpportunityForm from '@/components/opportunity-form';
-import OpportunityCard from '@/components/opportunity-card';
-import OpportunityDashboard from '@/components/opportunity-dashboard';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft } from 'lucide-react';
+import { OpportunityListSkeleton } from '@/components/opportunity-skeletons';
+
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
-  const [opportunities, setOpportunities] = useState<Opportunity[] | null>(null);
-  const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null);
-  const [analysis, setAnalysis] = useState<Analysis | null>(null);
-  const [structure, setStructure] = useState<BusinessStructure | null>(null);
-  const [strategy, setStrategy] = useState<Strategy | null>(null);
-
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleDiscover = async (data: IdentifyPromisingOpportunitiesInput) => {
     setIsLoading(true);
-    setOpportunities(null);
-    setSelectedOpportunity(null);
 
     try {
       const result = await identifyPromisingOpportunities(data);
       if (result && result.length > 0) {
-        setOpportunities(result);
+        // Store opportunities in local storage to pass to the next page
+        localStorage.setItem('discoveredOpportunities', JSON.stringify(result));
+        router.push('/opportunities');
       } else {
         toast({
           variant: 'destructive',
           title: 'No Opportunities Found',
           description: 'The AI could not identify any opportunities. Try adjusting your inputs.',
         });
+        setIsLoading(false);
       }
     } catch (error) {
       console.error(error);
@@ -50,98 +41,13 @@ export default function Home() {
         title: 'An Error Occurred',
         description: 'Failed to fetch business opportunities. Please try again.',
       });
-    } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleSelectOpportunity = async (opportunity: Opportunity) => {
-    setIsLoading(true);
-    setSelectedOpportunity(opportunity);
-    setAnalysis(null);
-    setStructure(null);
-    setStrategy(null);
-
-    try {
-      const analysisResult = await analyzeMarketOpportunity({
-        opportunityDescription: opportunity.description,
-      });
-      setAnalysis(analysisResult);
-      
-      const structureResult = await generateBusinessStructure({
-        opportunityName: opportunity.opportunityName,
-        opportunityDescription: opportunity.description,
-      });
-      setStructure(structureResult);
-
-      const marketAnalysisString = `Demand: ${analysisResult.demandForecast}, Competition: ${analysisResult.competitiveLandscape}, Revenue: ${analysisResult.potentialRevenue}`;
-      const strategyResult = await buildAutomatedBusinessStrategy({
-        marketAnalysis: marketAnalysisString,
-      });
-      setStrategy(strategyResult);
-    } catch (error) {
-      console.error(error);
-      toast({
-        variant: 'destructive',
-        title: 'Analysis Failed',
-        description: 'Failed to analyze the opportunity. Please try again.',
-      });
-      // Reset to opportunity list on failure
-      setSelectedOpportunity(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleBackToOpportunities = () => {
-    setSelectedOpportunity(null);
-    setAnalysis(null);
-    setStrategy(null);
-    setStructure(null);
+    } 
   };
   
-  const handleBackToForm = () => {
-    setOpportunities(null);
-    setSelectedOpportunity(null);
-  }
-
   const renderContent = () => {
-    if (isLoading && !selectedOpportunity) {
+    if (isLoading) {
       return <OpportunityListSkeleton />;
-    }
-    
-    if (isLoading && selectedOpportunity) {
-        return <OpportunityDashboardSkeleton opportunity={selectedOpportunity} onBack={handleBackToOpportunities} />;
-    }
-
-    if (selectedOpportunity && analysis && structure && strategy) {
-      return (
-        <OpportunityDashboard
-          opportunity={selectedOpportunity}
-          analysis={analysis}
-          structure={structure}
-          strategy={strategy}
-          onBack={handleBackToOpportunities}
-        />
-      );
-    }
-
-    if (opportunities) {
-      return (
-        <div>
-           <div className="flex items-center gap-4 mb-8">
-            <Button variant="ghost" size="icon" onClick={handleBackToForm}>
-                <ArrowLeft />
-            </Button>
-            <h2 className="font-headline text-3xl font-bold tracking-tight">Identified Opportunities</h2>
-          </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {opportunities.map((opp, index) => (
-              <OpportunityCard key={index} opportunity={opp} onSelect={() => handleSelectOpportunity(opp)} />
-            ))}
-          </div>
-        </div>
-      );
     }
 
     return (
@@ -169,49 +75,3 @@ export default function Home() {
     </div>
   );
 }
-
-const OpportunityListSkeleton = () => (
-  <div>
-    <h2 className="font-headline text-3xl font-bold tracking-tight mb-8">Discovering Opportunities...</h2>
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {[...Array(6)].map((_, i) => (
-        <div key={i} className="border bg-card text-card-foreground rounded-lg shadow-sm">
-          <div className="p-6">
-            <Skeleton className="h-6 w-3/4 mb-2" />
-            <Skeleton className="h-4 w-full mb-4" />
-            <Skeleton className="h-4 w-1/2" />
-          </div>
-          <div className="p-6 pt-0">
-             <Skeleton className="h-16 w-full mb-4" />
-          </div>
-          <div className="flex items-center p-6 pt-0">
-            <Skeleton className="h-10 w-28" />
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-const OpportunityDashboardSkeleton = ({ opportunity, onBack }: { opportunity: Opportunity, onBack: () => void }) => (
-    <div>
-        <div className="flex items-center gap-4 mb-8">
-            <Button variant="ghost" size="icon" onClick={onBack} disabled>
-                <ArrowLeft />
-            </Button>
-            <div>
-                <Skeleton className="h-5 w-48 mb-2" />
-                <Skeleton className="h-8 w-72" />
-            </div>
-        </div>
-        <div className="space-y-8">
-            <Skeleton className="h-10 w-64 mb-4" />
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <Skeleton className="h-40 rounded-lg" />
-                <Skeleton className="h-40 rounded-lg" />
-                <Skeleton className="h-40 rounded-lg" />
-            </div>
-            <Skeleton className="h-64 w-full rounded-lg" />
-        </div>
-    </div>
-);

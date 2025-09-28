@@ -6,3 +6,4 @@ import '@/ai/flows/analyze-market-opportunity.ts';
 import '@/ai/flows/prioritize-online-business-ventures.ts';
 import '@/ai/flows/build-automated-business-strategy.ts';
 import '@/ai/flows/generate-business-structure.ts';
+import '@/ai/flows/rank-business-opportunities.ts';

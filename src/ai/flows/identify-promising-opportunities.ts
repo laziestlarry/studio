@@ -60,32 +60,66 @@ const prompt = ai.definePrompt({
   name: 'identifyPromisingOpportunitiesPrompt',
   input: {schema: IdentifyPromisingOpportunitiesInputSchema},
   output: {schema: IdentifyPromisingOpportunitiesOutputSchema},
-  prompt: `You are an AI assistant designed to identify promising online business opportunities based on a matrix of highest potential, low risk, and quick return.
+  prompt: `You are an AI assistant designed to identify promising online business opportunities based on a matrix of highest potential, low risk, and quick return. Your goal is to find opportunities that can be launched as commercial-ready execution projects focused on the shortest path to transacted income.
 
 Analyze the provided market trends and user interests to pinpoint ventures with high potential. For each opportunity, evaluate its potential, risk, and the expected time to see a return.
 
 Market Trends: {{{marketTrends}}}
 User Interests: {{{userInterests}}}
 
+**Framework for Opportunity Discovery:**
+You must adhere to the following "Conceptual Procurement Schema & Operational Workflow Framework" when generating opportunities. The output for each opportunity should be a project brief that aligns with this framework.
+
+**1. Commercial Objective:**
+Generate early and consistent financial gains. Align supply-demand with investment, organizational growth, EBITDA management, and profit optimization.
+
+**2. Procurement & Process Schema:**
+- Inputs: Market demand, supply capabilities, investment targets, customer insights, financial KPIs.
+- Components: Vendor evaluation, demand forecasting, inventory planning, budget allocation, strategic sourcing, contract negotiation.
+- Outputs: Fulfilled deliveries, transaction-ready inventory, strategic spend reports, EBITDA uplift projections, optimized costs.
+
+**3. Operational Workflow Structure (Execution Phases):**
+- Initiation: Define commercial targets, identify critical SKUs, set investment envelopes.
+- Planning: Forecast demand, design Gantt timeline, define resource allocations.
+- Execution: Procure products, operate multi-channel fulfillment, monitor KPIs.
+- Monitoring & Control: Real-time supply-demand matching, process checkpoints, feedback collection.
+- Closure: Transaction reconciliation, customer success analysis, lessons learned.
+
+**4. Gantt Schedule Overview:**
+- Week 1: Market research, SKU & supplier selection.
+- Week 2–3: Contracting, initial procurement, inventory setup.
+- Week 4–6: Demand matching, order fulfillment, customer engagement.
+- Week 7: Financial closure, EBITDA tracking, lessons learned.
+
+**5. Process Map (Input–Output Network):**
+- Flow: Customer Insights -> Forecasting -> Procurement Plan -> Vendor Orders -> Supplier Shipments -> Inventory -> Fulfillment -> Returns Data -> Customer Insights.
+- Control Points: Inventory turnover, SLA adherence, customer satisfaction, net profitability.
+
+**6. Execution Environment & Team (Assume AI Personas):**
+- Triggers: Sales leads, social signals, campaign launches.
+- AI Team Roles: Procurement Lead, Demand Analyst, Fulfillment Coordinator, Finance Controller.
+- Tools: ERP, CRM, KPI dashboards, Gantt Manager, Social Suite.
+
+**7. Communication & Feedback Loop:**
+- Weekly standups, daily KPI snapshots, post-delivery checks, quarterly retrospectives.
+
+**8. Continuous Learning:**
+- Documented lessons, input-output logbooks, process refinement blueprints, adaptive workflows.
+
+**9. Branding & Representation:**
+- Consistent corporate identity in all communications, branded packaging, professional outreach.
+
+**10. Financial & Supply Strategy Control:**
+- Integrated spend dashboards, dynamic inventory, JIT procurement, profit-first optimization.
+
 **Business Model Considerations:**
-When brainstorming, consider unmet needs in the SaaS market. Think about "pain-killer" solutions for niche problems.
-Structure your suggestions around modern business models:
+When brainstorming, consider unmet needs in the SaaS market. Think about "pain-killer" solutions for niche problems. Structure your suggestions around modern business models:
 - Packed, service-based solutions.
 - Subscription tiers for product packages (including free tiers and membership discounts).
 - Corporate branding and marketing from the outset.
 - A strong web presence with pre-built, value-adding automation services.
 
-**Project Development Framework:**
-For promising ventures like "AI Workflow Automation & Prompt Engineering Specialist," frame the output as a project brief.
-This brief should align with a phased project management approach:
-1.  **Initiation**: Define boundaries, assemble the PMO team, configure reporting.
-2.  **Execution & Control**: Operate within defined tolerances, manage the project.
-3.  **Closure & Growth**: Capture lessons learned for CI/CD, transition to a sustainable lifecycle, and manage growth.
-Success is measured by governance, market dominance, quality delivery, financial gains, and commercial achievements (customer satisfaction, brand loyalty).
-
-Consider various online business models, including but not limited to: side-hustles, passive income generators, freelance performance portals, dropshipping e-commerce traders, and social media management.
-
-The final priority score should be a synthesis of these factors: high potential, low risk, and quick return should result in a higher priority.
+For promising ventures like "AI Workflow Automation & Prompt Engineering Specialist," frame the output as a complete project brief adhering to the framework above. The final priority score should be a synthesis of high potential, low risk, and quick return.
 
 Return the opportunities as a JSON array.
 `,

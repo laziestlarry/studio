@@ -10,6 +10,8 @@ import { ArrowLeft, BarChart3, Bot, BrainCircuit, Building2, CheckSquare, Clock,
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 interface OpportunityDashboardProps {
   opportunity: Opportunity;
@@ -36,6 +38,19 @@ const chartConfig = {
   },
 };
 
+const getPriorityBadgeColor = (priority: 'High' | 'Medium' | 'Low') => {
+  switch (priority) {
+    case 'High':
+      return 'bg-destructive text-destructive-foreground';
+    case 'Medium':
+      return 'bg-accent text-accent-foreground';
+    case 'Low':
+      return 'bg-secondary text-secondary-foreground';
+    default:
+      return 'bg-muted text-muted-foreground';
+  }
+};
+
 const TaskItem = ({ task, onToggle }: { task: Task, onToggle: (id: string) => void }) => (
   <div className="flex items-start gap-4 p-4 border-b">
     <Checkbox
@@ -45,12 +60,15 @@ const TaskItem = ({ task, onToggle }: { task: Task, onToggle: (id: string) => vo
       className="mt-1"
     />
     <div className="grid gap-1.5 flex-1">
-      <label
-        htmlFor={`task-${task.id}`}
-        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-      >
-        {task.title}
-      </label>
+      <div className="flex items-center justify-between">
+        <label
+          htmlFor={`task-${task.id}`}
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          {task.title}
+        </label>
+        <Badge className={cn("text-xs", getPriorityBadgeColor(task.priority))}>{task.priority} Priority</Badge>
+      </div>
       <p className="text-sm text-muted-foreground">{task.description}</p>
       {task.humanContribution && (
         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
@@ -383,7 +401,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
               <Lightbulb className="h-4 w-4" />
               <AlertTitle>Actionable Steps</AlertTitle>
               <AlertDescription>
-                This is your AI-generated to-do list. Check off tasks as you complete them to track your progress towards launching your business.
+                This is your AI-generated to-do list. Check off tasks as you complete them to track your progress towards launching your business. The AI has prioritized tasks based on urgency and importance.
               </AlertDescription>
             </Alert>
              <Alert variant="destructive">

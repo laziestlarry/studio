@@ -49,13 +49,22 @@ const prompt = ai.definePrompt({
   name: 'buildAutomatedBusinessStrategyPrompt',
   input: {schema: BuildAutomatedBusinessStrategyInputSchema},
   output: {schema: BuildAutomatedBusinessStrategyOutputSchema},
-  prompt: `Based on the following market analysis, generate a comprehensive business strategy.
-Market Analysis: {{{marketAnalysis}}}
+  prompt: `You are an expert AI strategist. Based on the following market analysis, generate a comprehensive business strategy that adheres to the "Conceptual Procurement Schema & Operational Workflow Framework". The strategy should be designed for maximum automation and profit-first optimization.
 
-The business strategy should include:
-- Detailed marketing tactics to reach the target audience.
-- Efficient operational workflows to ensure smooth execution.
-- Projected financial performance and key metrics.`,
+**Market Analysis:** {{{marketAnalysis}}}
+
+**Framework Guidance:**
+- **Operational Workflow:** Structure the marketing, operations, and financial plans according to the specified phases: Initiation, Planning, Execution, Monitoring & Control, and Closure.
+- **Team & Tools:** Assume an AI-powered team (Procurement Lead, Demand Analyst, etc.) using automated tools (ERP, CRM, Gantt Managers).
+- **Financials:** The financial forecast should align with a profit-first approach, emphasizing EBITDA uplift and optimized procurement costs.
+- **Branding:** All tactics should reflect a consistent corporate identity.
+
+**Output Requirements:**
+The business strategy must include:
+- **Marketing Tactics:** A detailed plan for each phase of the operational workflow, from initial market research to customer engagement and feedback loops.
+- **Operational Workflows:** An efficient, automated workflow for the entire process, from procurement and inventory management to multi-channel fulfillment and quality control. This should be a Just-in-Time (JIT) model aligned with marketing campaigns.
+- **Financial Forecasts:** Projected financial performance, key metrics (KPIs), and a clear path to profitability that reflects the profit-first strategy.
+`,
 });
 
 const buildAutomatedBusinessStrategyFlow = ai.defineFlow(

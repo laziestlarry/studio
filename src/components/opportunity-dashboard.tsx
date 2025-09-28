@@ -2,11 +2,11 @@ import { useState } from 'react';
 import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, Task } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, BarChart3, Bot, BrainCircuit, Building2, CheckSquare, Cpu, DollarSign, FileCog, Lightbulb, LineChart, Target, Users } from 'lucide-react';
+import { ArrowLeft, BarChart3, Bot, BrainCircuit, Building2, CheckSquare, Cpu, DollarSign, FileCog, Gavel, Lightbulb, LineChart, Milestone, Scale, Search, ShieldQuestion, Target, User, Users, Users2 } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Progress } from '@/components/ui/progress';
@@ -77,6 +77,15 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
       ...category,
       tasks: category.tasks.map(task => tasks.find(t => t.id === task.id) || task),
     }));
+  };
+
+  const getIconForRole = (role: string) => {
+    const lowerRole = role.toLowerCase();
+    if (lowerRole.includes('legal')) return <Gavel className="h-5 w-5 text-primary" />;
+    if (lowerRole.includes('debat')) return <Scale className="h-5 w-5 text-primary" />;
+    if (lowerRole.includes('philosopher') || lowerRole.includes('ethic')) return <BrainCircuit className="h-5 w-5 text-primary" />;
+    if (lowerRole.includes('audit')) return <Search className="h-5 w-5 text-primary" />;
+    return <User className="h-5 w-5 text-primary" />;
   };
 
   return (
@@ -177,38 +186,113 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                         This is an AI-generated organizational structure designed for automation and efficiency. Use this as a guide to build your team and workflows.
                     </AlertDescription>
                 </Alert>
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-3 font-headline">
-                            <Users className="h-6 w-6 text-primary" />
-                            Multi-Layered Commander
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-muted-foreground">{structure.commander}</p>
-                    </CardContent>
-                </Card>
-                 <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-3 font-headline">
-                            <Cpu className="h-6 w-6 text-primary" />
-                            AI-Core Base
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-muted-foreground">{structure.aiCore}</p>
-                    </CardContent>
-                </Card>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-3 font-headline">
+                                <User className="h-6 w-6 text-primary" />
+                                Multi-Layered Commander
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground">{structure.commander}</p>
+                        </CardContent>
+                    </Card>
+                     <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-3 font-headline">
+                                <Cpu className="h-6 w-6 text-primary" />
+                                AI-Core Base
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground">{structure.aiCore}</p>
+                        </CardContent>
+                    </Card>
+                     <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-3 font-headline">
+                                <ShieldQuestion className="h-6 w-6 text-primary" />
+                                Advisory Council
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                           <Accordion type="single" collapsible>
+                                {structure.advisoryCouncil.map((advisor, index) => (
+                                    <AccordionItem key={index} value={`item-${index}`}>
+                                        <AccordionTrigger className="text-base font-semibold">
+                                          <div className="flex items-center gap-3">
+                                            {getIconForRole(advisor.role)}
+                                            {advisor.role}
+                                          </div>
+                                        </AccordionTrigger>
+                                        <AccordionContent className="pt-2 text-sm">
+                                           <p className="text-muted-foreground">{advisor.description}</p>
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                ))}
+                            </Accordion>
+                        </CardContent>
+                    </Card>
+                  </div>
+                  <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-3 font-headline">
+                                <Users2 className="h-6 w-6 text-primary" />
+                                C-Level Board
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                           <div className="space-y-4">
+                                {structure.cLevelBoard.map((role, index) => (
+                                    <div key={index} className="p-3 border rounded-lg">
+                                       <h4 className="font-semibold">{role.role}</h4>
+                                       <p className="text-sm text-muted-foreground">{role.description}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                     <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-3 font-headline">
+                                <Milestone className="h-6 w-6 text-primary" />
+                                Project Management Framework
+                            </CardTitle>
+                            <CardDescription>{structure.projectManagementFramework.methodology}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                           <Accordion type="single" collapsible defaultValue="item-0">
+                                {structure.projectManagementFramework.phases.map((phase, index) => (
+                                    <AccordionItem key={index} value={`item-${index}`}>
+                                        <AccordionTrigger className="text-base font-semibold">{phase.phaseName}</AccordionTrigger>
+                                        <AccordionContent className="pt-2 text-sm space-y-3">
+                                           <p className="text-muted-foreground">{phase.description}</p>
+                                           <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                                            {phase.keyActivities.map((activity, i) => <li key={i}>{activity}</li>)}
+                                           </ul>
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                ))}
+                            </Accordion>
+                        </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
                  <Card>
                     <CardHeader>
                         <CardTitle className="font-headline">AI-Powered Departments</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <Accordion type="single" collapsible defaultValue="item-0">
+                        <Accordion type="single" collapsible>
                             {structure.departments.map((dept, index) => (
                                 <AccordionItem key={index} value={`item-${index}`}>
                                     <AccordionTrigger className="text-lg font-semibold">{dept.name}</AccordionTrigger>
-                                    <AccordionContent className="pt-2 text-base space-y-4">
+                                    <AccordionContent className="pt-2 text-base space-y-6">
                                         <div>
                                             <h4 className="font-semibold text-foreground mb-1">Function</h4>
                                             <p className="text-muted-foreground whitespace-pre-line">{dept.function}</p>
@@ -216,6 +300,17 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                         <div>
                                             <h4 className="font-semibold text-foreground mb-1">AI Integration</h4>
                                             <p className="text-muted-foreground whitespace-pre-line">{dept.aiIntegration}</p>
+                                        </div>
+                                         <div>
+                                            <h4 className="font-semibold text-foreground mb-2">AI Staff & Personas</h4>
+                                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                              {dept.staff.map((staff, i) => (
+                                                <div key={i} className="p-4 border rounded-lg bg-background/50">
+                                                  <h5 className="font-bold">{staff.role}</h5>
+                                                  <p className="text-sm text-muted-foreground italic mt-1">{staff.persona}</p>
+                                                </div>
+                                              ))}
+                                            </div>
                                         </div>
                                     </AccordionContent>
                                 </AccordionItem>

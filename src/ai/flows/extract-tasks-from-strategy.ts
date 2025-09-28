@@ -23,7 +23,7 @@ const TaskCategorySchema = z.object({
   tasks: z.array(TaskSchema).describe('A list of tasks within this category.'),
 });
 
-export const ExtractTasksFromStrategyInputSchema = z.object({
+const ExtractTasksFromStrategyInputSchema = z.object({
   businessStrategy: z.object({
     marketingTactics: z.string(),
     operationalWorkflows: z.string(),
@@ -34,7 +34,7 @@ export type ExtractTasksFromStrategyInput = z.infer<
   typeof ExtractTasksFromStrategyInputSchema
 >;
 
-export const ExtractTasksFromStrategyOutputSchema = z.object({
+const ExtractTasksFromStrategyOutputSchema = z.object({
   actionPlan: z.array(TaskCategorySchema).describe('A structured action plan with categories and tasks.'),
 });
 export type ExtractTasksFromStrategyOutput = z.infer<

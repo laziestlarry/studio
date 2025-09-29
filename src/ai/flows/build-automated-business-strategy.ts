@@ -26,10 +26,10 @@ const BuildAutomatedBusinessStrategyOutputSchema = z.object({
   businessStrategy: z.object({
     marketingTactics: z
       .string()
-      .describe('A detailed marketing plan to reach the target audience.'),
+      .describe('A detailed marketing plan to reach the target audience, including multi-channel sales strategies.'),
     operationalWorkflows: z
       .string()
-      .describe('Efficient operational workflows to ensure smooth execution.'),
+      .describe('Efficient operational workflows, including production of top-seller quality content in various formats, quality checks, customer service lifecycle, and financial transfer systems.'),
     financialForecasts: z
       .string()
       .describe('Projected financial performance and key metrics.'),
@@ -61,8 +61,12 @@ const prompt = ai.definePrompt({
 
 **Output Requirements:**
 The business strategy must include:
-- **Marketing Tactics:** A detailed plan for each phase of the operational workflow, from initial market research to customer engagement and feedback loops.
-- **Operational Workflows:** An efficient, automated workflow for the entire process, from procurement and inventory management to multi-channel fulfillment and quality control. This should be a Just-in-Time (JIT) model aligned with marketing campaigns.
+- **Marketing Tactics:** A detailed plan for each phase, from market research to customer engagement. Crucially, this must include a **multi-channel sales strategy** for platforms like Etsy, Shopify, social media, etc.
+- **Operational Workflows:** An efficient, automated workflow covering the entire lifecycle:
+    - **Creation:** A process for generating **"top-seller quality"** content and assets in **various required formats** (e.g., blog posts, social media images, video scripts).
+    - **Quality Control:** Define a **quality check** step before any product is listed and a **final assurance approval** step before customer delivery.
+    - **Financial Transfers:** Propose a system for configuring **financial transfers** (e.g., Stripe, PayPal).
+    - **Customer Service:** Outline a **customer service lifecycle** management plan.
 - **Financial Forecasts:** Projected financial performance, key metrics (KPIs), and a clear path to profitability that reflects the profit-first strategy.
 `,
 });

@@ -15,6 +15,7 @@ const TaskSchema = z.object({
   id: z.string().describe('A unique identifier for the task.'),
   title: z.string().describe('A short, descriptive title for the task.'),
   description: z.string().describe('A more detailed description of the task and what it entails.'),
+  category: z.string().describe('The category of the task (e.g., "Marketing", "Operations", "Quality Assurance", "Finance", "Customer Service").'),
   completed: z.boolean().describe('Whether the task has been completed.'),
   humanContribution: z.string().describe('Description of the human involvement required for this task (e.g., "Observer/Approval", "Monitoring status", "Final strategic sign-off").'),
   priority: z.enum(['High', 'Medium', 'Low']).describe('The priority of the task based on an Eisenhower Matrix of urgency and importance.'),
@@ -31,7 +32,7 @@ const TaskCategorySchema = z.object({
 const BusinessModelCanvasSchema = z.object({
     keyPartners: z.array(z.string()).describe("Who are our Key Partners? Who are our key suppliers?"),
     keyActivities: z.array(z.string()).describe("What Key Activities do our Value Propositions require?"),
-    keyResources: z.array(z.string()).describe("What Key Resources do our Value Propositions require?"),
+    keyResources: z-array(z.string()).describe("What Key Resources do our Value Propositions require?"),
     valuePropositions: z.array(z.string()).describe("What value do we deliver to the customer? Which one of our customer’s problems are we helping to solve?"),
     customerRelationships: z.array(z.string()).describe("What type of relationship does each of our Customer Segments expect us to establish and maintain with them?"),
     channels: z.array(z.string()).describe("Through which Channels do our Customer Segments want to be reached?"),
@@ -97,10 +98,19 @@ For each major section (Marketing, Operations, Financials), create a task catego
 For each task:
 1.  **Unique ID**: A short, unique ID (e.g., "MKT-01").
 2.  **Title & Description**: A clear title and description.
-3.  **Human Contribution**: Specify for "Lazy Larry." Focus on monitoring and approval (e.g., "Monitor campaign performance," "Final approval for budget").
-4.  **Priority**: Assign 'High', 'Medium', or 'Low' based on an Eisenhower Matrix (urgency/importance for a fast launch).
-5.  **Dates**: Provide an estimated 'startDate' and 'endDate' in YYYY-MM-DD format, assuming the project starts today. Keep timelines aggressive for a rapid launch.
-6.  **Dependencies**: List the IDs of tasks that must be completed before this one can start.
+3.  **Category**: Assign a clear category (e.g., "Marketing", "Operations", "Quality Assurance", "Finance", "Customer Service").
+4.  **Human Contribution**: Specify for "Lazy Larry." Focus on monitoring and approval (e.g., "Monitor campaign performance," "Final approval for budget").
+5.  **Priority**: Assign 'High', 'Medium', or 'Low' based on an Eisenhower Matrix (urgency/importance for a fast launch).
+6.  **Dates**: Provide an estimated 'startDate' and 'endDate' in YYYY-MM-DD format, assuming the project starts today. Keep timelines aggressive for a rapid launch.
+7.  **Dependencies**: List the IDs of tasks that must be completed before this one can start.
+
+**Crucially, ensure the action plan includes specific tasks for:**
+- **Quality Check:** A task for quality assurance review *before* a product/asset is listed.
+- **Final Assurance:** A task for final approval *before* a product/asset is delivered to a customer.
+- **Multi-Format Production:** Tasks related to producing assets in various formats (e.g., generate blog post, create social graphic).
+- **Multi-Channel Sales:** Tasks for setting up and managing different sales channels.
+- **Financial Setup:** A task for configuring payment/financial transfer systems.
+- **Customer Service Setup:** A task to establish the customer service workflow.
 
 Finally, identify the single task that represents the **critical path** for the quickest launch. Provide a 'timeEstimate' in **days or weeks**.
 

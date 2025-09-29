@@ -32,7 +32,7 @@ const TaskCategorySchema = z.object({
 const BusinessModelCanvasSchema = z.object({
     keyPartners: z.array(z.string()).describe("Who are our Key Partners? Who are our key suppliers?"),
     keyActivities: z.array(z.string()).describe("What Key Activities do our Value Propositions require?"),
-    keyResources: z-array(z.string()).describe("What Key Resources do our Value Propositions require?"),
+    keyResources: z.array(z.string()).describe("What Key Resources do our Value Propositions require?"),
     valuePropositions: z.array(z.string()).describe("What value do we deliver to the customer? Which one of our customer’s problems are we helping to solve?"),
     customerRelationships: z.array(z.string()).describe("What type of relationship does each of our Customer Segments expect us to establish and maintain with them?"),
     channels: z.array(z.string()).describe("Through which Channels do our Customer Segments want to be reached?"),

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, Task } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';

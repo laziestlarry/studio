@@ -39,7 +39,7 @@ export default function OpportunitiesPage() {
     try {
       const result = await rankBusinessOpportunities({
         opportunities,
-        focus: 'AI-Driven Global E-commerce for Localized POD & Digital Products',
+        focus: 'Maximum profit potential with minimal risk and fastest time-to-market.',
       });
       if (result) {
         // The flow already returns sorted items, but we sort again just in case

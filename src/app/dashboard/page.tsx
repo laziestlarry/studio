@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { analyzeMarketOpportunity } from '@/ai/flows/analyze-market-opportunity';
 import { generateBusinessStructure } from '@/ai/flows/generate-business-structure';
@@ -24,17 +24,7 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const router = useRouter();
 
-  useEffect(() => {
-    const opportunityString = localStorage.getItem('selectedOpportunity');
-    if (opportunityString) {
-      const opportunity = JSON.parse(opportunityString);
-      handleSelectOpportunity(opportunity);
-    } else {
-      router.push('/');
-    }
-  }, [router]);
-
-  const handleSelectOpportunity = async (opportunity: Opportunity) => {
+  const handleSelectOpportunity = useCallback(async (opportunity: Opportunity) => {
     setIsLoading(true);
     setSelectedOpportunity(opportunity);
     setAnalysis(null);
@@ -80,7 +70,17 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router, toast]);
+
+  useEffect(() => {
+    const opportunityString = localStorage.getItem('selectedOpportunity');
+    if (opportunityString) {
+      const opportunity = JSON.parse(opportunityString);
+      handleSelectOpportunity(opportunity);
+    } else {
+      router.push('/');
+    }
+  }, [router, handleSelectOpportunity]);
 
   const handleBackToOpportunities = () => {
     router.push('/opportunities');

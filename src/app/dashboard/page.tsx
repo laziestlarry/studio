@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { analyzeMarketOpportunity } from '@/ai/flows/analyze-market-opportunity';
 import { generateBusinessStructure } from '@/ai/flows/generate-business-structure';
@@ -24,63 +24,67 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const router = useRouter();
 
-  const handleSelectOpportunity = useCallback(async (opportunity: Opportunity) => {
-    setIsLoading(true);
-    setSelectedOpportunity(opportunity);
-    setAnalysis(null);
-    setStructure(null);
-    setStrategy(null);
-    setActionPlan(null);
-
-    try {
-      // Run initial analyses in parallel
-      const [analysisResult, structureResult] = await Promise.all([
-        analyzeMarketOpportunity({
-          opportunityDescription: opportunity.description,
-        }),
-        generateBusinessStructure({
-          opportunityName: opportunity.opportunityName,
-          opportunityDescription: opportunity.description,
-        })
-      ]);
-
-      setAnalysis(analysisResult);
-      setStructure(structureResult);
-
-      const marketAnalysisString = `Demand: ${analysisResult.demandForecast}, Competition: ${analysisResult.competitiveLandscape}, Revenue: ${analysisResult.potentialRevenue}`;
-      const strategyResult = await buildAutomatedBusinessStrategy({
-        marketAnalysis: marketAnalysisString,
-      });
-      setStrategy(strategyResult);
-      
-      const actionPlanResult = await extractTasksFromStrategy({
-        businessStrategy: strategyResult.businessStrategy,
-      });
-      setActionPlan(actionPlanResult);
-
-    } catch (error) {
-      console.error(error);
-      toast({
-        variant: 'destructive',
-        title: 'Analysis Failed',
-        description: 'Failed to analyze the opportunity. Please try again.',
-      });
-      // Reset to opportunity list on failure
-      router.push('/opportunities');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [router, toast]);
-
   useEffect(() => {
     const opportunityString = localStorage.getItem('selectedOpportunity');
-    if (opportunityString) {
-      const opportunity = JSON.parse(opportunityString);
-      handleSelectOpportunity(opportunity);
-    } else {
+    if (!opportunityString) {
       router.push('/');
+      return;
     }
-  }, [router, handleSelectOpportunity]);
+
+    const opportunity = JSON.parse(opportunityString);
+    setSelectedOpportunity(opportunity);
+
+    const runAnalysis = async (opportunityToAnalyze: Opportunity) => {
+      try {
+        setIsLoading(true);
+        setAnalysis(null);
+        setStructure(null);
+        setStrategy(null);
+        setActionPlan(null);
+
+        // Run initial analyses in parallel
+        const [analysisResult, structureResult] = await Promise.all([
+          analyzeMarketOpportunity({
+            opportunityDescription: opportunityToAnalyze.description,
+          }),
+          generateBusinessStructure({
+            opportunityName: opportunityToAnalyze.opportunityName,
+            opportunityDescription: opportunityToAnalyze.description,
+          })
+        ]);
+
+        setAnalysis(analysisResult);
+        setStructure(structureResult);
+
+        const marketAnalysisString = `Demand: ${analysisResult.demandForecast}, Competition: ${analysisResult.competitiveLandscape}, Revenue: ${analysisResult.potentialRevenue}`;
+        const strategyResult = await buildAutomatedBusinessStrategy({
+          marketAnalysis: marketAnalysisString,
+        });
+        setStrategy(strategyResult);
+        
+        const actionPlanResult = await extractTasksFromStrategy({
+          businessStrategy: strategyResult.businessStrategy,
+        });
+        setActionPlan(actionPlanResult);
+
+      } catch (error) {
+        console.error(error);
+        toast({
+          variant: 'destructive',
+          title: 'Analysis Failed',
+          description: 'Failed to analyze the opportunity. Please try again.',
+        });
+        // Reset to opportunity list on failure
+        router.push('/opportunities');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    runAnalysis(opportunity);
+
+  }, [router, toast]);
+
 
   const handleBackToOpportunities = () => {
     router.push('/opportunities');

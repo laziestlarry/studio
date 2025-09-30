@@ -65,7 +65,7 @@ export default function DashboardPage() {
         setActionPlan(null);
         setBuildModeAdvice(null);
 
-        // Run initial analyses in parallel
+        // Step 1: Run initial analyses in parallel
         const [analysisResult, structureResult] = await Promise.all([
           analyzeMarketOpportunity({
             opportunityDescription: selectedOpportunity.description,
@@ -79,12 +79,14 @@ export default function DashboardPage() {
         setAnalysis(analysisResult);
         setStructure(structureResult);
 
+        // Step 2: Build foundational strategy based on analysis
         const marketAnalysisString = `Demand: ${analysisResult.demandForecast}, Competition: ${analysisResult.competitiveLandscape}, Revenue: ${analysisResult.potentialRevenue}`;
         const strategyResult = await buildAutomatedBusinessStrategy({
           marketAnalysis: marketAnalysisString,
         });
         setStrategy(strategyResult);
         
+        // Step 3: Generate build mode advice based on the foundational strategy
         const adviceResult = await generateBuildModeAdvice({
           businessStrategy: strategyResult.businessStrategy,
         });

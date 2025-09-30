@@ -10,6 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import type { GenerateBuildModeAdviceInput, GenerateBuildModeAdviceOutput } from '@/lib/types';
 
 const BuildModeAnalysis = z.object({
     costBenefitAnalysis: z.string().describe('A detailed cost-benefit analysis of this build mode.'),
@@ -17,24 +18,18 @@ const BuildModeAnalysis = z.object({
     strategicRecommendation: z.string().describe('A strategic recommendation on when to choose this mode.'),
 });
 
-export const GenerateBuildModeAdviceInputSchema = z.object({
+const GenerateBuildModeAdviceInputSchema = z.object({
   businessStrategy: z.object({
     marketingTactics: z.string(),
     operationalWorkflows: z.string(),
     financialForecasts: z.string(),
   }),
 });
-export type GenerateBuildModeAdviceInput = z.infer<
-  typeof GenerateBuildModeAdviceInputSchema
->;
 
-export const GenerateBuildModeAdviceOutputSchema = z.object({
+const GenerateBuildModeAdviceOutputSchema = z.object({
     inHouse: BuildModeAnalysis,
     outSourced: BuildModeAnalysis,
 });
-export type GenerateBuildModeAdviceOutput = z.infer<
-  typeof GenerateBuildModeAdviceOutputSchema
->;
 
 export async function generateBuildModeAdvice(
   input: GenerateBuildModeAdviceInput

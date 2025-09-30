@@ -24,7 +24,7 @@ const BuildModeAnalysis = z.object({
     strategicRecommendation: z.string(),
 });
 
-export const GenerateBuildModeAdviceOutputSchema = z.object({
+const GenerateBuildModeAdviceOutputSchema = z.object({
     inHouse: BuildModeAnalysis,
     outSourced: BuildModeAnalysis,
 });

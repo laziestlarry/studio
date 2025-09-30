@@ -20,8 +20,9 @@ interface OpportunityDashboardProps {
   analysis: Analysis;
   strategy: Strategy;
   structure: BusinessStructure;
-  actionPlan: ActionPlan;
+  actionPlan: ActionPlan | null;
   onBack: () => void;
+  children?: React.ReactNode;
 }
 
 const chartData = [
@@ -84,8 +85,9 @@ const TaskItem = ({ task, onToggle }: { task: Task, onToggle: (id: string) => vo
 );
 
 
-export default function OpportunityDashboard({ opportunity, analysis, strategy, structure, actionPlan, onBack }: OpportunityDashboardProps) {
-  const [tasks, setTasks] = useState(actionPlan.actionPlan.flatMap(category => category.tasks));
+export default function OpportunityDashboard({ opportunity, analysis, strategy, structure, actionPlan, onBack, children }: OpportunityDashboardProps) {
+  const initialTasks = actionPlan ? actionPlan.actionPlan.flatMap(category => category.tasks) : [];
+  const [tasks, setTasks] = useState(initialTasks);
   const [currentView, setCurrentView] = useState('list');
 
 
@@ -102,6 +104,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
   const progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
   
   const getCategorizedTasks = () => {
+    if (!actionPlan) return [];
     return actionPlan.actionPlan.map(category => ({
       ...category,
       tasks: category.tasks.map(task => tasks.find(t => t.id === task.id) || task),
@@ -116,6 +119,10 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
     if (lowerRole.includes('audit')) return <Search className="h-5 w-5 text-primary" />;
     return <User className="h-5 w-5 text-primary" />;
   };
+
+  const actionPlanTabDisabled = !actionPlan;
+  const financialsTabDisabled = !actionPlan;
+
 
   return (
     <div className="animate-in fade-in-50 duration-500">
@@ -147,13 +154,16 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
           <TabsTrigger value="strategy">
             <BrainCircuit className="mr-2 h-4 w-4" /> Business Strategy
           </TabsTrigger>
-          <TabsTrigger value="action-plan">
+          <TabsTrigger value="action-plan" disabled={actionPlanTabDisabled}>
             <CheckSquare className="mr-2 h-4 w-4" /> Action Plan
           </TabsTrigger>
-          <TabsTrigger value="financials">
+          <TabsTrigger value="financials" disabled={financialsTabDisabled}>
              <DollarSign className="mr-2 h-4 w-4" /> Financials
           </TabsTrigger>
         </TabsList>
+
+        {children}
+
         <TabsContent value="analysis" className="mt-6">
           <div className="space-y-6">
             <Alert>
@@ -388,14 +398,16 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                 This automated strategy provides a starting point. Adapt these tactics and workflows to your specific goals and resources.
               </AlertDescription>
             </Alert>
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-headline">Business Model Canvas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                  <ProjectManagementViews actionPlan={actionPlan} view="canvas" />
-              </CardContent>
-            </Card>
+            {actionPlan && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="font-headline">Business Model Canvas</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ProjectManagementViews actionPlan={actionPlan} view="canvas" />
+                    </CardContent>
+                </Card>
+            )}
             <Card>
               <CardHeader>
                 <CardTitle className="font-headline">Strategic Pillars</CardTitle>
@@ -441,124 +453,128 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
            </div>
         </TabsContent>
          <TabsContent value="action-plan" className="mt-6">
-          <div className="space-y-6">
-            <Alert>
-              <Lightbulb className="h-4 w-4" />
-              <AlertTitle>Actionable Steps</AlertTitle>
-              <AlertDescription>
-                This is your AI-generated to-do list. Use the controls to switch between List, Kanban, and Gantt views.
-              </AlertDescription>
-            </Alert>
-             <Alert variant="destructive">
-                <Clock className="h-4 w-4" />
-                <AlertTitle>Critical Path Estimate</AlertTitle>
-                <AlertDescription>
-                    The AI has identified <strong>`{actionPlan.criticalPath.taskTitle}`</strong> as the most time-consuming task, with an estimated duration of <strong>{actionPlan.criticalPath.timeEstimate}</strong>. Prioritizing this will be key to timely project completion.
-                </AlertDescription>
-            </Alert>
-            <Card>
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex-1">
-                    <CardTitle className="font-headline">Implementation Progress</CardTitle>
-                    <div className="flex items-center gap-4 pt-2">
-                      <Progress value={progressPercentage} className="w-full" />
-                      <span className="text-sm font-semibold text-muted-foreground whitespace-nowrap">
-                        {completedTasks} / {totalTasks} Tasks
-                      </span>
-                    </div>
-                  </div>
-                   <div className="flex items-center gap-2">
-                      <Button variant={currentView === 'list' ? 'default' : 'outline'} size="sm" onClick={() => setCurrentView('list')}>
-                          <CheckSquare className="mr-2 h-4 w-4" /> List
-                      </Button>
-                      <Button variant={currentView === 'kanban' ? 'default' : 'outline'} size="sm" onClick={() => setCurrentView('kanban')}>
-                          <Kanban className="mr-2 h-4 w-4" /> Board
-                      </Button>
-                      <Button variant={currentView === 'gantt' ? 'default' : 'outline'} size="sm" onClick={() => setCurrentView('gantt')}>
-                          <GanttChart className="mr-2 h-4 w-4" /> Gantt
-                      </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                 <ProjectManagementViews actionPlan={actionPlan} view={currentView} tasks={tasks} onToggleTask={handleToggleTask} />
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-         <TabsContent value="financials" className="mt-6">
+          {actionPlan && (
             <div className="space-y-6">
-                 <Alert>
-                    <Lightbulb className="h-4 w-4" />
-                    <AlertTitle>Financial Estimates</AlertTitle>
+                <Alert>
+                <Lightbulb className="h-4 w-4" />
+                <AlertTitle>Actionable Steps</AlertTitle>
+                <AlertDescription>
+                    This is your AI-generated to-do list. Use the controls to switch between List, Kanban, and Gantt views.
+                </AlertDescription>
+                </Alert>
+                <Alert variant="destructive">
+                    <Clock className="h-4 w-4" />
+                    <AlertTitle>Critical Path Estimate</AlertTitle>
                     <AlertDescription>
-                        These are AI-generated financial estimates based on the business strategy. Use them for initial planning and budgeting.
+                        The AI has identified <strong>`{actionPlan.criticalPath.taskTitle}`</strong> as the most time-consuming task, with an estimated duration of <strong>{actionPlan.criticalPath.timeEstimate}</strong>. Prioritizing this will be key to timely project completion.
                     </AlertDescription>
                 </Alert>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                <CardHeader>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex-1">
+                        <CardTitle className="font-headline">Implementation Progress</CardTitle>
+                        <div className="flex items-center gap-4 pt-2">
+                        <Progress value={progressPercentage} className="w-full" />
+                        <span className="text-sm font-semibold text-muted-foreground whitespace-nowrap">
+                            {completedTasks} / {totalTasks} Tasks
+                        </span>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Button variant={currentView === 'list' ? 'default' : 'outline'} size="sm" onClick={() => setCurrentView('list')}>
+                            <CheckSquare className="mr-2 h-4 w-4" /> List
+                        </Button>
+                        <Button variant={currentView === 'kanban' ? 'default' : 'outline'} size="sm" onClick={() => setCurrentView('kanban')}>
+                            <Kanban className="mr-2 h-4 w-4" /> Board
+                        </Button>
+                        <Button variant={currentView === 'gantt' ? 'default' : 'outline'} size="sm" onClick={() => setCurrentView('gantt')}>
+                            <GanttChart className="mr-2 h-4 w-4" /> Gantt
+                        </Button>
+                    </div>
+                    </div>
+                </CardHeader>
+                <CardContent className="p-0">
+                    <ProjectManagementViews actionPlan={actionPlan} view={currentView} tasks={tasks} onToggleTask={handleToggleTask} />
+                </CardContent>
+                </Card>
+            </div>
+          )}
+        </TabsContent>
+         <TabsContent value="financials" className="mt-6">
+            {actionPlan && (
+                <div className="space-y-6">
+                    <Alert>
+                        <Lightbulb className="h-4 w-4" />
+                        <AlertTitle>Financial Estimates</AlertTitle>
+                        <AlertDescription>
+                            These are AI-generated financial estimates based on the business strategy. Use them for initial planning and budgeting.
+                        </AlertDescription>
+                    </Alert>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="font-headline">Capital Expenditures (CAPEX)</CardTitle>
+                                <CardDescription>One-time costs to get the business started.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Accordion type="single" collapsible>
+                                    {actionPlan.financials.capex.map((item, index) => (
+                                        <AccordionItem key={index} value={`item-${index}`}>
+                                            <AccordionTrigger className="text-base font-semibold">
+                                            <div className="flex justify-between w-full pr-4">
+                                                <span>{item.item}</span>
+                                                <span className="text-primary">{item.amount}</span>
+                                            </div>
+                                            </AccordionTrigger>
+                                            <AccordionContent className="pt-2 text-sm text-muted-foreground">
+                                            {item.justification}
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    ))}
+                                </Accordion>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="font-headline">Operational Expenditures (OPEX)</CardTitle>
+                                <CardDescription>Recurring monthly or annual costs to run the business.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Accordion type="single" collapsible>
+                                    {actionPlan.financials.opex.map((item, index) => (
+                                        <AccordionItem key={index} value={`item-${index}`}>
+                                            <AccordionTrigger className="text-base font-semibold">
+                                            <div className="flex justify-between w-full pr-4">
+                                                <span>{item.item}</span>
+                                                <span className="text-primary">{item.amount}</span>
+                                            </div>
+                                            </AccordionTrigger>
+                                            <AccordionContent className="pt-2 text-sm text-muted-foreground">
+                                            {item.justification}
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    ))}
+                                </Accordion>
+                            </CardContent>
+                        </Card>
+                    </div>
                     <Card>
                         <CardHeader>
-                            <CardTitle className="font-headline">Capital Expenditures (CAPEX)</CardTitle>
-                            <CardDescription>One-time costs to get the business started.</CardDescription>
+                            <CardTitle className="font-headline">Investment Options</CardTitle>
+                            <CardDescription>Potential ways to fund your new venture.</CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <Accordion type="single" collapsible>
-                                {actionPlan.financials.capex.map((item, index) => (
-                                     <AccordionItem key={index} value={`item-${index}`}>
-                                        <AccordionTrigger className="text-base font-semibold">
-                                          <div className="flex justify-between w-full pr-4">
-                                            <span>{item.item}</span>
-                                            <span className="text-primary">{item.amount}</span>
-                                          </div>
-                                        </AccordionTrigger>
-                                        <AccordionContent className="pt-2 text-sm text-muted-foreground">
-                                           {item.justification}
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                ))}
-                            </Accordion>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="font-headline">Operational Expenditures (OPEX)</CardTitle>
-                             <CardDescription>Recurring monthly or annual costs to run the business.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                             <Accordion type="single" collapsible>
-                                {actionPlan.financials.opex.map((item, index) => (
-                                     <AccordionItem key={index} value={`item-${index}`}>
-                                        <AccordionTrigger className="text-base font-semibold">
-                                          <div className="flex justify-between w-full pr-4">
-                                            <span>{item.item}</span>
-                                            <span className="text-primary">{item.amount}</span>
-                                          </div>
-                                        </AccordionTrigger>
-                                        <AccordionContent className="pt-2 text-sm text-muted-foreground">
-                                           {item.justification}
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                ))}
-                            </Accordion>
+                        <CardContent className="space-y-4">
+                            {actionPlan.financials.investmentOptions.map((option, index) => (
+                                <div key={index} className="p-4 border rounded-lg">
+                                <h4 className="font-semibold text-lg">{option.type} - <span className="text-primary">{option.amount}</span></h4>
+                                <p className="text-muted-foreground mt-2">{option.description}</p>
+                                </div>
+                            ))}
                         </CardContent>
                     </Card>
                 </div>
-                 <Card>
-                    <CardHeader>
-                        <CardTitle className="font-headline">Investment Options</CardTitle>
-                        <CardDescription>Potential ways to fund your new venture.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        {actionPlan.financials.investmentOptions.map((option, index) => (
-                             <div key={index} className="p-4 border rounded-lg">
-                               <h4 className="font-semibold text-lg">{option.type} - <span className="text-primary">{option.amount}</span></h4>
-                               <p className="text-muted-foreground mt-2">{option.description}</p>
-                            </div>
-                        ))}
-                    </CardContent>
-                </Card>
-            </div>
+            )}
         </TabsContent>
       </Tabs>
     </div>

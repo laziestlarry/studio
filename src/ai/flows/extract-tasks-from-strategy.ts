@@ -59,6 +59,9 @@ const ExtractTasksFromStrategyInputSchema = z.object({
     operationalWorkflows: z.string(),
     financialForecasts: z.string(),
   }),
+  buildMode: z
+    .enum(['in-house', 'out-sourced'])
+    .describe('The build methodology that was used to generate the strategy.'),
 });
 export type ExtractTasksFromStrategyInput = z.infer<
   typeof ExtractTasksFromStrategyInputSchema
@@ -91,10 +94,12 @@ const prompt = ai.definePrompt({
   name: 'extractTasksFromStrategyPrompt',
   input: {schema: ExtractTasksFromStrategyInputSchema},
   output: {schema: ExtractTasksFromStrategyOutputSchema},
-  prompt: `You are an expert project manager and financial analyst AI. Your job is to take a high-level business strategy and convert it into a comprehensive, actionable project plan and financial estimate. The human stakeholder ("Lazy Larry") prefers to be in an observer/approver role.
+  prompt: `You are an expert project manager and financial analyst AI. Your job is to take a high-level business strategy and convert it into a comprehensive, actionable project plan and financial estimate, tailored to the specified build mode. The human stakeholder ("Lazy Larry") prefers to be in an observer/approver role.
+
+**Build Mode:** {{{buildMode}}}
 
 **Part 1: Action Plan & Gantt Chart Data**
-For each major section (Marketing, Operations, Financials), create a task category. Then, extract specific, actionable tasks.
+For each major section (Marketing, Operations, Financials), create a task category. Then, extract specific, actionable tasks based on the business strategy and build mode.
 For each task:
 1.  **Unique ID**: A short, unique ID (e.g., "MKT-01").
 2.  **Title & Description**: A clear title and description.
@@ -103,6 +108,20 @@ For each task:
 5.  **Priority**: Assign 'High', 'Medium', or 'Low' based on an Eisenhower Matrix (urgency/importance for a fast launch).
 6.  **Dates**: Provide an estimated 'startDate' and 'endDate' in YYYY-MM-DD format, assuming the project starts today. Keep timelines aggressive for a rapid launch.
 7.  **Dependencies**: List the IDs of tasks that must be completed before this one can start.
+
+{{#if (eq buildMode "in-house")}}
+### In-House Task Focus ###
+Tasks should reflect internal development cycles, team collaboration, and building proprietary systems.
+{{/if}}
+
+{{#if (eq buildMode "out-sourced")}}
+### Out-Sourced Task Focus ###
+Tasks should be heavily focused on procurement, management, and integration of external resources.
+- **Supplier Discovery:** Include tasks for "Identify and vet freelance content creators on Upwork" or "Research free-tier CRM solutions."
+- **Tool Integration:** Add tasks like "Set up trial for [SaaS tool] and integrate with workflow" or "Clone and deploy open-source project management tool from GitHub."
+- **Prompt Engineering:** Include tasks for "Develop detailed prompts for AI image generation models" or "Create specification documents for outsourced developers."
+- **Knowledge Base:** Add a task for "Compile a database of top-rated suppliers and free software solutions."
+{{/if}}
 
 **Crucially, ensure the action plan includes specific tasks for:**
 - **Quality Check:** A task for quality assurance review *before* a product/asset is listed.
@@ -119,8 +138,8 @@ Based on the overall strategy, populate a standard Business Model Canvas. Be con
 
 **Part 3: Financial Estimation**
 Based on the strategy and tasks, estimate the financials:
-1.  **CAPEX**: List key one-time capital expenditures (e.g., software licenses, hardware).
-2.  **OPEX**: List recurring operational expenditures (e.g., monthly subscriptions, marketing spend).
+1.  **CAPEX**: List key one-time capital expenditures. For out-sourced mode, this might be minimal (e.g., "Initial deposits for freelancers").
+2.  **OPEX**: List recurring operational expenditures. For out-sourced mode, this could include "Monthly freelance budget" or "Low-cost SaaS subscriptions."
 3.  **Investment Options**: Suggest 2-3 suitable investment options (e.g., Bootstrapping, Seed Funding) with potential amounts and justifications.
 
 Keep all estimates realistic for a lean, AI-driven startup.

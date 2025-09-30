@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { analyzeMarketOpportunity } from '@/ai/flows/analyze-market-opportunity';
 import { generateBusinessStructure } from '@/ai/flows/generate-business-structure';
@@ -13,8 +13,9 @@ import OpportunityDashboard from '@/components/opportunity-dashboard';
 import { OpportunityDashboardSkeleton } from '@/components/opportunity-skeletons';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Bot } from 'lucide-react';
+import { ArrowLeft, Bot, Building, Rocket, Zap } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 
 export default function DashboardPage() {
@@ -25,6 +26,7 @@ export default function DashboardPage() {
   const [structure, setStructure] = useState<BusinessStructure | null>(null);
   const [strategy, setStrategy] = useState<Strategy | null>(null);
   const [actionPlan, setActionPlan] = useState<ActionPlan | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -51,10 +53,11 @@ export default function DashboardPage() {
     
   }, [router]);
 
-  const handleBuildPlan = async () => {
+  const handleBuildPlan = async (buildMode: 'in-house' | 'out-sourced') => {
       if (!selectedOpportunity) return;
       try {
         setIsLoading(true);
+        setIsDialogOpen(false);
         setAnalysis(null);
         setStructure(null);
         setStrategy(null);
@@ -77,11 +80,13 @@ export default function DashboardPage() {
         const marketAnalysisString = `Demand: ${analysisResult.demandForecast}, Competition: ${analysisResult.competitiveLandscape}, Revenue: ${analysisResult.potentialRevenue}`;
         const strategyResult = await buildAutomatedBusinessStrategy({
           marketAnalysis: marketAnalysisString,
+          buildMode: buildMode,
         });
         setStrategy(strategyResult);
         
         const actionPlanResult = await extractTasksFromStrategy({
           businessStrategy: strategyResult.businessStrategy,
+          buildMode: buildMode,
         });
         setActionPlan(actionPlanResult);
         setPlanBuilt(true);
@@ -132,9 +137,37 @@ export default function DashboardPage() {
                     <p className="font-semibold">Ready to build your automated business plan?</p>
                 </div>
                 <p className="text-sm text-muted-foreground">The AI will generate a market analysis, organizational structure, business strategy, and actionable project plan for this opportunity.</p>
-                <Button size="lg" onClick={handleBuildPlan} disabled={isLoading}>
-                    {isLoading ? "Building Plan..." : "Build Business Plan"}
-                </Button>
+                
+                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button size="lg" disabled={isLoading}>
+                            {isLoading ? "Building Plan..." : "Build Business Plan"}
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle className="text-2xl font-headline">Choose Your Build Strategy</DialogTitle>
+                            <DialogDescription>
+                                How do you want to build this business? Your choice will tailor the entire generated plan.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                           <Card className="flex flex-col items-center text-center p-6 hover:border-primary transition-colors duration-200">
+                                <Building className="h-10 w-10 text-primary mb-4"/>
+                                <h3 className="font-bold text-lg mb-2">Build In-house</h3>
+                                <p className="text-sm text-muted-foreground mb-4">Full control. Plan for internal teams, custom development, and building proprietary assets.</p>
+                                <Button className="w-full mt-auto" onClick={() => handleBuildPlan('in-house')}>Select In-house</Button>
+                           </Card>
+                           <Card className="flex flex-col items-center text-center p-6 hover:border-primary transition-colors duration-200">
+                                <Zap className="h-10 w-10 text-accent mb-4"/>
+                                <h3 className="font-bold text-lg mb-2">Build Out-sourced</h3>
+                                <p className="text-sm text-muted-foreground mb-4">"Lazy Mode". Maximize use of freelancers, open-source tools, and free solutions to launch fast.</p>
+                                <Button className="w-full mt-auto" onClick={() => handleBuildPlan('out-sourced')} variant="secondary">Select Out-sourced</Button>
+                           </Card>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+
             </div>
         </Card>
         <Button variant="ghost" size="sm" onClick={handleBackToOpportunities} className="mt-8">

@@ -16,7 +16,7 @@ const formSchema = z.object({
   context: z.string().optional(),
 }).refine(data => !!data.userInterests || !!data.marketTrends || !!data.context, {
   message: "Please fill out at least one field to get started.",
-  path: ["userInterests"], // Show error under the first field
+  path: ["context"], // Show error under the main field
 });
 
 
@@ -38,14 +38,31 @@ export default function OpportunityForm({ onSubmit, isSubmitting }: OpportunityF
   return (
     <Card className="shadow-lg">
       <CardHeader>
-        <CardTitle className="font-headline text-2xl">Discover Your Niche</CardTitle>
+        <CardTitle className="font-headline text-2xl">Analysis Agent</CardTitle>
         <CardDescription>
-          Provide some context for our AI to find business opportunities tailored for you.
+          Provide context for the AI to analyze. The more data you provide, the better the results. At least one field is required.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="context"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base font-semibold">Paste Your Document or Data Here</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Paste any relevant data, documents, articles, or thoughts you want the AI to analyze to discover business opportunities..."
+                      className="resize-y min-h-[250px] font-mono text-xs"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="userInterests"
@@ -80,31 +97,15 @@ export default function OpportunityForm({ onSubmit, isSubmitting }: OpportunityF
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="context"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base">Paste your data here (optional)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Paste any relevant data, documents, or thoughts you want the AI to analyze..."
-                      className="resize-y min-h-[200px] font-mono text-xs"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            
             <Button type="submit" disabled={isSubmitting} size="lg" className="w-full">
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Discovering...
+                  Analyzing & Discovering Opportunities...
                 </>
               ) : (
-                'Discover Opportunities'
+                'Analyze and Discover'
               )}
             </Button>
           </form>

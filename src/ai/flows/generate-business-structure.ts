@@ -32,7 +32,7 @@ const KPISchema = z.object({
 });
 
 const CLevelRoleSchema = z.object({
-  role: z.string().describe('The C-level title (e.g., CEO, CFO, COO).'),
+  role: z.string().describe('The C-level title (e.g., CEO, CTO, CFO, COO).'),
   description: z
     .string()
     .describe(
@@ -43,7 +43,7 @@ const CLevelRoleSchema = z.object({
 const AdvisoryRoleSchema = z.object({
   role: z
     .string()
-    .describe('The title of the advisor (e.g., Legal Advisor, Ethicist).'),
+    .describe('The title of the advisor (e.g., Legal Advisor, Ethicist, Role Creator).'),
   description: z
     .string()
     .describe(
@@ -54,7 +54,7 @@ const AdvisoryRoleSchema = z.object({
 const AIPersonaSchema = z.object({
   role: z
     .string()
-    .describe('The job title or role of the AI persona (e.g., Marketing Manager, Content Creator).'),
+    .describe('The job title or role of the AI persona (e.g., Marketing Manager, Content Creator, Reasoner, Specialist).'),
   persona: z
     .string()
     .describe(
@@ -132,27 +132,27 @@ const prompt = ai.definePrompt({
   name: 'generateBusinessStructurePrompt',
   input: {schema: GenerateBusinessStructureInputSchema},
   output: {schema: GenerateBusinessStructureOutputSchema},
-  prompt: `You are an expert in organizational design and AI-driven business automation. For the given business opportunity, design a detailed organizational structure for a fully automated, AI-powered agency.
+  prompt: `You are an expert in organizational design and AI-driven business automation. For the given business opportunity, design a detailed organizational structure for a fully automated, AI-powered agency based on a sophisticated AI Delegation Model.
 
 Business Opportunity Name: {{{opportunityName}}}
 Business Opportunity Description: {{{opportunityDescription}}}
 
-The structure must be comprehensive and hierarchical, designed for maximum efficiency, and aligned with a phased project management approach to ensure the successful launch and growth of the business.
+The structure must be comprehensive, hierarchical, and designed for maximum efficiency, incorporating specialized AI agent roles. It must be aligned with a phased project management approach to ensure successful launch and growth.
 
 Design the following components:
 1.  **Multi-Layered Commander**: The ultimate strategic authority. Describe this role's function.
-2.  **C-Level Board & OKRs**: Define a board of C-level executives (CEO, CFO, COO, CMO, CPO). Describe their responsibilities. Also, define 2-3 high-level corporate **OKRs** (Objectives and Key Results) that this board will be responsible for.
-3.  **Advisory Council**: Create a panel of AI consultants (e.g., Legal, Debater, Philosopher, Audit) that advise the leadership. Describe their function.
+2.  **C-Level Board & OKRs**: Define a board of C-level executives (e.g., CEO, CFO, COO, CMO, CPO, CTO, Chief Risk Officer). Describe their responsibilities. Also, define 2-3 high-level corporate **OKRs** (Objectives and Key Results) that this board will be responsible for.
+3.  **Advisory Council**: Create a panel of AI consultants (e.g., Legal Expert, Ethicist, Debater, Philosopher, Role Creator) that advise the leadership. Describe their function. The 'Role Creator' is crucial for self-improvement, proposing new AI agent roles as the system evolves.
 4.  **AI-Core Base**: Describe the central AI system that manages, automates, and orchestrates tasks across the entire organization.
-5.  **AI-Powered Departments & KPIs**: Define a set of foundational departments. For each:
+5.  **AI-Powered Departments & KPIs**: Define a set of foundational departments. Include departments for **Data & Analytics**, **Technology & Development**, and **Strategy & Innovation**. For each:
     - Describe its primary function and AI integration.
-    - Create a list of AI Personas (staff).
+    - Create a list of specialized AI Personas (staff) inspired by the AI Delegation Model (e.g., Analysis Maker, Reporter, Reasoner, Specialist, Model Trainer, Developer, Test Engineer, Strategy Analyst, Strategy Visionary, Prompt Checker).
     - Define 2-3 specific **KPIs** (Key Performance Indicators) for each department that align with the corporate OKRs.
 6.  **Project Management Framework**:
     - State the methodology (e.g., a hybrid of Prince-2 and Agile).
     - Outline the key phases for realizing the business plan: Initiation, Development, Establishment, Activation, Execution, and Control for sustainable growth.
 
-The goal is to create a self-improving, agile organization that ensures delivery perfection, achieves financial goals, and can dominate its market through highly orchestrated, automated workflows.
+The goal is to create a self-improving, agile organization that ensures delivery perfection, achieves financial goals, and can dominate its market through highly orchestrated, automated workflows executed by specialized AI agents.
 `,
 });
 

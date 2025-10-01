@@ -8,7 +8,8 @@ import { generateBusinessStructure } from '@/ai/flows/generate-business-structur
 import { buildAutomatedBusinessStrategy } from '@/ai/flows/build-automated-business-strategy';
 import { extractTasksFromStrategy } from '@/ai/flows/extract-tasks-from-strategy';
 import { generateBuildModeAdvice } from '@/ai/flows/generate-build-mode-advice';
-import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, BuildModeAdvice } from '@/lib/types';
+import { generateChartData } from '@/ai/flows/generate-chart-data';
+import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, BuildModeAdvice, ChartData } from '@/lib/types';
 import AppHeader from '@/components/app-header';
 import OpportunityDashboard from '@/components/opportunity-dashboard';
 import { OpportunityDashboardSkeleton } from '@/components/opportunity-skeletons';
@@ -29,6 +30,7 @@ export default function DashboardPage() {
   const [strategy, setStrategy] = useState<Strategy | null>(null);
   const [buildModeAdvice, setBuildModeAdvice] = useState<BuildModeAdvice | null>(null);
   const [actionPlan, setActionPlan] = useState<ActionPlan | null>(null);
+  const [chartData, setChartData] = useState<ChartData | null>(null);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -45,11 +47,12 @@ export default function DashboardPage() {
     // Check if a plan has already been generated and stored
     const storedPlan = localStorage.getItem(`plan_${opportunity.opportunityName}`);
      if (storedPlan) {
-      const { analysis, structure, strategy, actionPlan } = JSON.parse(storedPlan);
+      const { analysis, structure, strategy, actionPlan, chartData } = JSON.parse(storedPlan);
       setAnalysis(analysis);
       setStructure(structure);
       setStrategy(strategy);
       setActionPlan(actionPlan);
+      setChartData(chartData);
       setPlanBuilt(true);
     }
     
@@ -64,6 +67,7 @@ export default function DashboardPage() {
         setStrategy(null);
         setActionPlan(null);
         setBuildModeAdvice(null);
+        setChartData(null);
 
         // Step 1: Run initial analyses in parallel
         const [analysisResult, structureResult] = await Promise.all([
@@ -86,11 +90,19 @@ export default function DashboardPage() {
         });
         setStrategy(strategyResult);
         
-        // Step 3: Generate build mode advice based on the foundational strategy
-        const adviceResult = await generateBuildModeAdvice({
-          businessStrategy: strategyResult.businessStrategy,
-        });
+        // Step 3: Generate build mode advice and chart data in parallel
+        const [adviceResult, chartDataResult] = await Promise.all([
+            generateBuildModeAdvice({
+                businessStrategy: strategyResult.businessStrategy,
+            }),
+            generateChartData({
+                financialForecasts: strategyResult.businessStrategy.financialForecasts,
+            })
+        ]);
+        
         setBuildModeAdvice(adviceResult);
+        setChartData(chartDataResult.chartData);
+
 
         setPlanBuilt(true);
 
@@ -125,6 +137,7 @@ export default function DashboardPage() {
             structure,
             strategy,
             actionPlan: actionPlanResult,
+            chartData,
         }));
        }
 
@@ -192,7 +205,8 @@ export default function DashboardPage() {
                 analysis={analysis}
                 structure={structure}
                 strategy={strategy}
-                actionPlan={null} // Pass null to indicate it's not ready
+                actionPlan={null}
+                chartData={chartData}
                 onBack={handleBackToOpportunities}
             >
                 {buildModeAdvice && (
@@ -213,6 +227,7 @@ export default function DashboardPage() {
             structure={structure}
             strategy={strategy}
             actionPlan={actionPlan}
+            chartData={chartData}
             onBack={handleBackToOpportunities}
         />
     )

@@ -9,3 +9,4 @@ import '@/ai/flows/generate-business-structure.ts';
 import '@/ai/flows/rank-business-opportunities.ts';
 import '@/ai/flows/extract-tasks-from-strategy.ts';
 import '@/ai/flows/generate-build-mode-advice.ts';
+import '@/ai/flows/generate-chart-data.ts';

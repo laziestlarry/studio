@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, Task } from '@/lib/types';
+import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, Task, ChartData } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -21,18 +21,10 @@ interface OpportunityDashboardProps {
   strategy: Strategy;
   structure: BusinessStructure;
   actionPlan: ActionPlan | null;
+  chartData: ChartData | null;
   onBack: () => void;
   children?: React.ReactNode;
 }
-
-const chartData = [
-  { month: 'Jan', revenue: 186 },
-  { month: 'Feb', revenue: 305 },
-  { month: 'Mar', revenue: 237 },
-  { month: 'Apr', revenue: 73 },
-  { month: 'May', revenue: 209 },
-  { month: 'Jun', revenue: 214 },
-];
 
 const chartConfig = {
   revenue: {
@@ -41,7 +33,7 @@ const chartConfig = {
   },
 };
 
-export default function OpportunityDashboard({ opportunity, analysis, strategy, structure, actionPlan, onBack, children }: OpportunityDashboardProps) {
+export default function OpportunityDashboard({ opportunity, analysis, strategy, structure, actionPlan, chartData, onBack, children }: OpportunityDashboardProps) {
   const initialTasks = actionPlan ? actionPlan.actionPlan.flatMap(category => category.tasks) : [];
   const [tasks, setTasks] = useState(initialTasks);
   const [currentView, setCurrentView] = useState('list');
@@ -168,14 +160,19 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
             </Card>
             <Card className="print:border-none print:shadow-none">
               <CardHeader>
-                <CardTitle className="font-headline">Illustrative Revenue Projection</CardTitle>
+                <CardTitle className="font-headline">AI-Generated Revenue Projection</CardTitle>
               </CardHeader>
               <CardContent className="pl-2">
                 <ChartContainer config={chartConfig} className="h-[250px] w-full">
-                  <BarChart accessibilityLayer data={chartData}>
+                  <BarChart accessibilityLayer data={chartData || []}>
                     <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
-                    <YAxis tickLine={false} axisLine={false} tickMargin={8} fontSize={12} tickFormatter={(value) => `$${value}K`} />
-                    <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                    <YAxis tickLine={false} axisLine={false} tickMargin={8} fontSize={12} tickFormatter={(value) => `$${new Intl.NumberFormat('en-US', { notation: 'compact', compactDisplay: 'short' }).format(value)}`} />
+                    <ChartTooltip 
+                        cursor={false} 
+                        content={<ChartTooltipContent 
+                            formatter={(value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(value as number)}
+                        />} 
+                    />
                     <Bar dataKey="revenue" fill="var(--color-revenue)" radius={4} />
                   </BarChart>
                 </ChartContainer>

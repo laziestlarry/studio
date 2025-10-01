@@ -54,7 +54,7 @@ export default function Home() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tighter">
-            AI-Powered Business Opportunity Analysis
+            Turn Raw Data Into Actionable Business Ventures
           </h1>
           <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
             Paste any document, article, or unstructured text into the field below. The AI will analyze it to identify and frame high-potential business opportunities for you.

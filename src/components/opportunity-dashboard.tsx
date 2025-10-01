@@ -44,11 +44,11 @@ const chartConfig = {
 const getPriorityBadgeColor = (priority: 'High' | 'Medium' | 'Low') => {
   switch (priority) {
     case 'High':
-      return 'bg-destructive text-destructive-foreground';
+      return 'bg-red-500/20 text-red-400 border-red-500/30';
     case 'Medium':
-      return 'bg-accent text-accent-foreground';
+      return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
     case 'Low':
-      return 'bg-secondary text-secondary-foreground';
+      return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
     default:
       return 'bg-muted text-muted-foreground';
   }
@@ -70,7 +70,7 @@ const TaskItem = ({ task, onToggle }: { task: Task, onToggle: (id: string) => vo
         >
           {task.title}
         </label>
-        <Badge className={cn("text-xs", getPriorityBadgeColor(task.priority))}>{task.priority} Priority</Badge>
+        <Badge variant="outline" className={cn("text-xs", getPriorityBadgeColor(task.priority))}>{task.priority} Priority</Badge>
       </div>
       <p className="text-sm text-muted-foreground">{task.description}</p>
       {task.humanContribution && (
@@ -135,10 +135,10 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
           <h1 className="font-headline text-3xl md:text-4xl font-bold tracking-tight">{opportunity.opportunityName}</h1>
           <p className="text-muted-foreground mt-1">{opportunity.description}</p>
         </div>
-        <Card className="p-3 bg-accent/30">
+        <Card className="p-3 bg-accent/20 border-accent/30">
           <div className="flex items-center gap-2">
-            <Bot className="h-6 w-6 text-primary"/>
-            <p className="text-sm font-semibold">AI Generated Insights</p>
+            <Bot className="h-6 w-6 text-accent"/>
+            <p className="text-sm font-semibold text-accent-foreground">AI Generated Insights</p>
           </div>
         </Card>
       </div>
@@ -167,7 +167,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
         <TabsContent value="analysis" className="mt-6">
           <div className="space-y-6">
             <Alert className='print:hidden'>
-              <Lightbulb className="h-4 w-4" />
+              <Lightbulb className="h-4 w-4 text-accent" />
               <AlertTitle>Guidance</AlertTitle>
               <AlertDescription>
                 Review this market analysis to understand the competitive environment and potential demand. This data helps validate the viability of the business idea.
@@ -222,7 +222,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
         <TabsContent value="structure" className="mt-6">
             <div className="space-y-6">
                  <Alert className='print:hidden'>
-                    <Lightbulb className="h-4 w-4" />
+                    <Lightbulb className="h-4 w-4 text-accent" />
                     <AlertTitle>Organizational Blueprint</AlertTitle>
                     <AlertDescription>
                         This is an AI-generated organizational structure designed for automation and efficiency. Use this as a guide to build your team and workflows.
@@ -235,7 +235,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {structure.okrs.map((okr, index) => (
-                             <div key={index} className="p-4 border rounded-lg">
+                             <div key={index} className="p-4 border rounded-lg bg-card/50">
                                <h4 className="font-semibold text-lg">{okr.objective}</h4>
                                <ul className="list-disc list-inside mt-2 text-muted-foreground space-y-1">
                                 {okr.keyResults.map((kr, i) => <li key={i}>{kr}</li>)}
@@ -306,7 +306,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                         <CardContent>
                            <div className="space-y-4">
                                 {structure.cLevelBoard.map((role, index) => (
-                                    <div key={index} className="p-3 border rounded-lg">
+                                    <div key={index} className="p-3 border rounded-lg bg-card/50">
                                        <h4 className="font-semibold">{role.role}</h4>
                                        <p className="text-sm text-muted-foreground">{role.description}</p>
                                     </div>
@@ -392,7 +392,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
         <TabsContent value="strategy" className="mt-6">
            <div className="space-y-6">
             <Alert className='print:hidden'>
-              <Lightbulb className="h-4 w-4" />
+              <Lightbulb className="h-4 w-4 text-accent" />
               <AlertTitle>Guidance</AlertTitle>
               <AlertDescription>
                 This automated strategy provides a starting point. Adapt these tactics and workflows to your specific goals and resources.
@@ -456,7 +456,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
           {actionPlan && (
             <div className="space-y-6">
                 <Alert className='print:hidden'>
-                <Lightbulb className="h-4 w-4" />
+                <Lightbulb className="h-4 w-4 text-accent" />
                 <AlertTitle>Actionable Steps</AlertTitle>
                 <AlertDescription>
                     This is your AI-generated to-do list. Use the controls to switch between List, Kanban, and Gantt views.
@@ -505,7 +505,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
             {actionPlan && (
                 <div className="space-y-6">
                     <Alert className='print:hidden'>
-                        <Lightbulb className="h-4 w-4" />
+                        <Lightbulb className="h-4 w-4 text-accent" />
                         <AlertTitle>Financial Estimates</AlertTitle>
                         <AlertDescription>
                             These are AI-generated financial estimates based on the business strategy. Use them for initial planning and budgeting.
@@ -566,7 +566,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {actionPlan.financials.investmentOptions.map((option, index) => (
-                                <div key={index} className="p-4 border rounded-lg">
+                                <div key={index} className="p-4 border rounded-lg bg-card/50">
                                 <h4 className="font-semibold text-lg">{option.type} - <span className="text-primary">{option.amount}</span></h4>
                                 <p className="text-muted-foreground mt-2">{option.description}</p>
                                 </div>

@@ -41,17 +41,17 @@ export default function OpportunityCard({ opportunity, onSelect }: OpportunityCa
   const priorityValue = parseInt(priority, 10);
   const priorityColor =
     priorityValue >= 8
-      ? 'bg-green-500 hover:bg-green-600'
+      ? 'bg-green-500/20 text-green-400 border-green-500/30'
       : priorityValue >= 5
-      ? 'bg-yellow-500 hover:bg-yellow-600'
-      : 'bg-red-500 hover:bg-red-600';
+      ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+      : 'bg-red-500/20 text-red-400 border-red-500/30';
 
   const rankColor = isRanked && (opportunity as RankedOpportunity).rank <= 3
-      ? 'bg-primary hover:bg-primary/90'
-      : 'bg-secondary hover:bg-secondary/80 text-secondary-foreground';
+      ? 'bg-primary/20 text-primary border-primary/30'
+      : 'bg-secondary text-secondary-foreground';
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+    <Card className="flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl hover:border-primary/50">
       <CardHeader>
         <div className="relative aspect-video mb-4">
           {placeholder && (
@@ -64,7 +64,7 @@ export default function OpportunityCard({ opportunity, onSelect }: OpportunityCa
             />
           )}
            {isRanked && (
-            <Badge className={cn("absolute top-2 right-2 text-lg", rankColor)}>
+            <Badge variant="outline" className={cn("absolute top-2 right-2 text-lg font-bold", rankColor)}>
               #{(opportunity as RankedOpportunity).rank}
             </Badge>
           )}
@@ -72,7 +72,7 @@ export default function OpportunityCard({ opportunity, onSelect }: OpportunityCa
         <CardTitle className="font-headline text-xl">{opportunityName}</CardTitle>
         <CardDescription>{description}</CardDescription>
         {isRanked && (opportunity as RankedOpportunity).rationale && (
-            <CardDescription className="text-xs italic pt-2">
+            <CardDescription className="text-xs italic pt-2 text-accent">
                 <strong>Rationale:</strong> {(opportunity as RankedOpportunity).rationale}
             </CardDescription>
         )}
@@ -102,9 +102,9 @@ export default function OpportunityCard({ opportunity, onSelect }: OpportunityCa
       </CardContent>
       <CardFooter className="flex justify-between items-center mt-auto pt-4">
         <Button onClick={onSelect} variant="default">
-          Analyze <ArrowRight className="ml-2 h-4 w-4" />
+          Select & Build Plan <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
-        <Badge className={cn('text-primary-foreground', priorityColor)}>Priority: {priority}</Badge>
+        <Badge variant="outline" className={cn('font-semibold', priorityColor)}>Priority: {priority}</Badge>
       </CardFooter>
     </Card>
   );

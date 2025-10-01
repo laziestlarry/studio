@@ -6,13 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, BarChart3, Bot, BrainCircuit, Building2, CheckSquare, Clock, Cpu, DollarSign, FileCog, GanttChart, Gavel, Kanban, Lightbulb, LineChart, Milestone, Scale, Search, ShieldQuestion, Target, User, Users, Users2 } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import { ProjectManagementViews } from '@/components/project-management-views';
 
 interface OpportunityDashboardProps {
@@ -51,14 +48,6 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
   const totalTasks = tasks.length;
   const progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
   
-  const getCategorizedTasks = () => {
-    if (!actionPlan) return [];
-    return actionPlan.actionPlan.map(category => ({
-      ...category,
-      tasks: category.tasks.map(task => tasks.find(t => t.id === task.id) || task),
-    }));
-  };
-
   const getIconForRole = (role: string) => {
     const lowerRole = role.toLowerCase();
     if (lowerRole.includes('legal')) return <Gavel className="h-5 w-5 text-primary" />;
@@ -123,39 +112,36 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
               <CardHeader>
                 <CardTitle className="font-headline text-2xl">Market Analysis</CardTitle>
                 <CardDescription className="print:hidden">
-                    Review this market analysis to understand the competitive environment and potential demand. This data helps validate the viability of the business idea.
+                    High-level market assessment. Expand each section to see the detailed AI analysis.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Demand Forecast</CardTitle>
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">{analysis.demandForecast}</p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Competitive Landscape</CardTitle>
-                      <Target className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">{analysis.competitiveLandscape}</p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Potential Revenue</CardTitle>
-                      <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">{analysis.potentialRevenue}</p>
-                    </CardContent>
-                  </Card>
-                </div>
+                <Accordion type="single" collapsible className="w-full space-y-4 print-visible">
+                    <AccordionItem value="demand" className="border rounded-lg">
+                        <AccordionTrigger className="p-4 font-semibold text-lg flex items-center gap-3">
+                            <Users className="h-5 w-5 text-primary" /> Demand Forecast
+                        </AccordionTrigger>
+                        <AccordionContent className="p-4 pt-0 text-muted-foreground">
+                            {analysis.demandForecast}
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="competition" className="border rounded-lg">
+                        <AccordionTrigger className="p-4 font-semibold text-lg flex items-center gap-3">
+                            <Target className="h-5 w-5 text-primary" /> Competitive Landscape
+                        </AccordionTrigger>
+                        <AccordionContent className="p-4 pt-0 text-muted-foreground">
+                            {analysis.competitiveLandscape}
+                        </AccordionContent>
+                    </AccordionItem>
+                     <AccordionItem value="revenue" className="border rounded-lg">
+                        <AccordionTrigger className="p-4 font-semibold text-lg flex items-center gap-3">
+                            <DollarSign className="h-5 w-5 text-primary" /> Potential Revenue
+                        </AccordionTrigger>
+                        <AccordionContent className="p-4 pt-0 text-muted-foreground">
+                            {analysis.potentialRevenue}
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
               </CardContent>
             </Card>
             <Card className="print:border-none print:shadow-none">
@@ -186,7 +172,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                     <CardHeader>
                         <CardTitle className="font-headline text-2xl">Organizational Blueprint</CardTitle>
                         <CardDescription className="print:hidden">
-                            This is an AI-generated organizational structure designed for automation and efficiency. Use this as a guide to build your team and workflows.
+                            This is an AI-generated organizational structure designed for automation and efficiency.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
@@ -265,14 +251,18 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                <div className="space-y-4">
-                                        {structure.cLevelBoard.map((role, index) => (
-                                            <div key={index} className="p-3 border rounded-lg bg-card/50">
-                                            <h4 className="font-semibold">{role.role}</h4>
-                                            <p className="text-sm text-muted-foreground">{role.description}</p>
-                                            </div>
-                                        ))}
-                                    </div>
+                                <Accordion type="single" collapsible className="print-visible">
+                                    {structure.cLevelBoard.map((role, index) => (
+                                        <AccordionItem key={index} value={`item-${index}`}>
+                                            <AccordionTrigger className="text-base font-semibold">
+                                                {role.role}
+                                            </AccordionTrigger>
+                                            <AccordionContent className="pt-2 text-sm text-muted-foreground">
+                                                {role.description}
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    ))}
+                                </Accordion>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -477,7 +467,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                          <CardHeader>
                             <CardTitle className="font-headline text-2xl">Financials</CardTitle>
                             <CardDescription className="print:hidden">
-                                These are AI-generated financial estimates based on the business strategy. Use them for initial planning and budgeting.
+                                These are AI-generated financial estimates based on the business strategy.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
@@ -552,3 +542,5 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
     </div>
   );
 }
+
+    

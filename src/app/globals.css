@@ -64,3 +64,50 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .print\:hidden {
+    display: none !important;
+  }
+  .print\:block {
+    display: block !important;
+  }
+  .print\:border-none {
+    border: none !important;
+  }
+  .print\:shadow-none {
+    box-shadow: none !important;
+  }
+  .print\:p-0 {
+    padding: 0 !important;
+  }
+  .print\:bg-white {
+    background-color: white !important;
+  }
+  .print\:text-black {
+    color: black !important;
+  }
+  /* Ensure accordion content is visible */
+  .print-visible [data-state="closed"] {
+    display: block !important;
+    height: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  .print-visible [data-state="closed"] > div {
+     overflow: visible !important;
+  }
+  .print-visible [data-radix-collapsible-content] {
+    display: block !important;
+  }
+
+  /* Ensure tab content is visible */
+  [data-orientation="horizontal"] > [role="tabpanel"][aria-hidden="true"],
+  [data-orientation="vertical"] > [role="tabpanel"][aria-hidden="true"] {
+    display: block !important;
+  }
+}

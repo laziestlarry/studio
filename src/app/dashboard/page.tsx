@@ -14,7 +14,7 @@ import OpportunityDashboard from '@/components/opportunity-dashboard';
 import { OpportunityDashboardSkeleton } from '@/components/opportunity-skeletons';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Bot, Rocket } from 'lucide-react';
+import { ArrowLeft, Bot, Rocket, Printer } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import BuildModeSelector from '@/components/build-mode-selector';
 
@@ -143,6 +143,10 @@ export default function DashboardPage() {
   const handleBackToOpportunities = () => {
     router.push('/opportunities');
   };
+
+  const handlePrint = () => {
+    window.print();
+  }
   
   const renderInitialState = () => {
     if (!selectedOpportunity) {
@@ -216,7 +220,14 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <AppHeader />
+      <AppHeader>
+        {planBuilt && actionPlan && (
+          <Button onClick={handlePrint} variant="outline" size="sm" className="ml-auto print:hidden">
+            <Printer className="mr-2 h-4 w-4" />
+            Export as Blueprint
+          </Button>
+        )}
+      </AppHeader>
       <main className="flex-1 container mx-auto px-4 py-8">
        {isLoading && <OpportunityDashboardSkeleton onBack={handleBackToOpportunities} title="Building Your Business Plan..." />}
        {!isLoading && !planBuilt && renderInitialState()}

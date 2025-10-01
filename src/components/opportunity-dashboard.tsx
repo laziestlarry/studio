@@ -60,7 +60,7 @@ const TaskItem = ({ task, onToggle }: { task: Task, onToggle: (id: string) => vo
       id={`task-${task.id}`}
       checked={task.completed}
       onCheckedChange={() => onToggle(task.id)}
-      className="mt-1"
+      className="mt-1 print:hidden"
     />
     <div className="grid gap-1.5 flex-1">
       <div className="flex items-center justify-between">
@@ -126,7 +126,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
 
   return (
     <div className="animate-in fade-in-50 duration-500">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 print:hidden">
         <div>
           <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -144,7 +144,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
       </div>
 
       <Tabs defaultValue="analysis" className="w-full">
-        <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-3 lg:grid-cols-5">
+        <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-3 lg:grid-cols-5 print:hidden">
           <TabsTrigger value="analysis">
             <LineChart className="mr-2 h-4 w-4" /> Market Analysis
           </TabsTrigger>
@@ -166,7 +166,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
 
         <TabsContent value="analysis" className="mt-6">
           <div className="space-y-6">
-            <Alert>
+            <Alert className='print:hidden'>
               <Lightbulb className="h-4 w-4" />
               <AlertTitle>Guidance</AlertTitle>
               <AlertDescription>
@@ -221,7 +221,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
         </TabsContent>
         <TabsContent value="structure" className="mt-6">
             <div className="space-y-6">
-                 <Alert>
+                 <Alert className='print:hidden'>
                     <Lightbulb className="h-4 w-4" />
                     <AlertTitle>Organizational Blueprint</AlertTitle>
                     <AlertDescription>
@@ -277,7 +277,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                           <Accordion type="single" collapsible>
+                           <Accordion type="single" collapsible className="print-visible">
                                 {structure.advisoryCouncil.map((advisor, index) => (
                                     <AccordionItem key={index} value={`item-${index}`}>
                                         <AccordionTrigger className="text-base font-semibold">
@@ -323,7 +323,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                             <CardDescription>{structure.projectManagementFramework.methodology}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                           <Accordion type="single" collapsible defaultValue="item-0">
+                           <Accordion type="single" collapsible defaultValue="item-0" className="print-visible">
                                 {structure.projectManagementFramework.phases.map((phase, index) => (
                                     <AccordionItem key={index} value={`item-${index}`}>
                                         <AccordionTrigger className="text-base font-semibold">{phase.phaseName}</AccordionTrigger>
@@ -346,7 +346,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                         <CardTitle className="font-headline">AI-Powered Departments</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <Accordion type="single" collapsible>
+                        <Accordion type="single" collapsible className="print-visible">
                             {structure.departments.map((dept, index) => (
                                 <AccordionItem key={index} value={`item-${index}`}>
                                     <AccordionTrigger className="text-lg font-semibold">{dept.name}</AccordionTrigger>
@@ -391,7 +391,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
         </TabsContent>
         <TabsContent value="strategy" className="mt-6">
            <div className="space-y-6">
-            <Alert>
+            <Alert className='print:hidden'>
               <Lightbulb className="h-4 w-4" />
               <AlertTitle>Guidance</AlertTitle>
               <AlertDescription>
@@ -413,7 +413,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                 <CardTitle className="font-headline">Strategic Pillars</CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <Accordion type="single" collapsible defaultValue="marketing">
+                <Accordion type="single" collapsible defaultValue="marketing" className="print-visible">
                   <AccordionItem value="marketing">
                     <AccordionTrigger className="text-lg font-semibold">
                       <div className="flex items-center gap-3">
@@ -455,7 +455,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
          <TabsContent value="action-plan" className="mt-6">
           {actionPlan && (
             <div className="space-y-6">
-                <Alert>
+                <Alert className='print:hidden'>
                 <Lightbulb className="h-4 w-4" />
                 <AlertTitle>Actionable Steps</AlertTitle>
                 <AlertDescription>
@@ -481,7 +481,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                         </span>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 print:hidden">
                         <Button variant={currentView === 'list' ? 'default' : 'outline'} size="sm" onClick={() => setCurrentView('list')}>
                             <CheckSquare className="mr-2 h-4 w-4" /> List
                         </Button>
@@ -504,7 +504,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
          <TabsContent value="financials" className="mt-6">
             {actionPlan && (
                 <div className="space-y-6">
-                    <Alert>
+                    <Alert className='print:hidden'>
                         <Lightbulb className="h-4 w-4" />
                         <AlertTitle>Financial Estimates</AlertTitle>
                         <AlertDescription>
@@ -518,7 +518,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                 <CardDescription>One-time costs to get the business started.</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <Accordion type="single" collapsible>
+                                <Accordion type="single" collapsible className="print-visible">
                                     {actionPlan.financials.capex.map((item, index) => (
                                         <AccordionItem key={index} value={`item-${index}`}>
                                             <AccordionTrigger className="text-base font-semibold">
@@ -541,7 +541,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                 <CardDescription>Recurring monthly or annual costs to run the business.</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <Accordion type="single" collapsible>
+                                <Accordion type="single" collapsible className="print-visible">
                                     {actionPlan.financials.opex.map((item, index) => (
                                         <AccordionItem key={index} value={`item-${index}`}>
                                             <AccordionTrigger className="text-base font-semibold">

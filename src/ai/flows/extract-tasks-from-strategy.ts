@@ -62,6 +62,8 @@ const ExtractTasksFromStrategyInputSchema = z.object({
   buildMode: z
     .enum(['in-house', 'out-sourced'])
     .describe('The build methodology that was used to generate the strategy.'),
+  isInHouse: z.boolean().optional(),
+  isOutSourced: z.boolean().optional(),
 });
 export type ExtractTasksFromStrategyInput = z.infer<
   typeof ExtractTasksFromStrategyInputSchema
@@ -109,12 +111,12 @@ For each task:
 6.  **Dates**: Provide an estimated 'startDate' and 'endDate' in YYYY-MM-DD format, assuming the project starts today. Keep timelines aggressive for a rapid launch.
 7.  **Dependencies**: List the IDs of tasks that must be completed before this one can start.
 
-{{#if (eq buildMode "in-house")}}
+{{#if isInHouse}}
 ### In-House Task Focus ###
 Tasks should reflect internal development cycles, team collaboration, and building proprietary systems.
 {{/if}}
 
-{{#if (eq buildMode "out-sourced")}}
+{{#if isOutSourced}}
 ### Out-Sourced Task Focus ###
 Tasks should be heavily focused on procurement, management, and integration of external resources.
 - **Supplier Discovery:** Include tasks for "Identify and vet freelance content creators on Upwork" or "Research free-tier CRM solutions."
@@ -149,7 +151,7 @@ Keep all estimates realistic for a lean, AI-driven startup.
 - Operational Workflows: {{{businessStrategy.operationalWorkflows}}}
 - Financial Forecasts: {{{businessStrategy.financialForecasts}}}
 
-Generate the full, structured output including the action plan, canvas, and financial estimates.
+Generate the full, structured output including the action plan, a canvas, and financial estimates.
 `,
 });
 
@@ -160,7 +162,12 @@ const extractTasksFromStrategyFlow = ai.defineFlow(
     outputSchema: ExtractTasksFromStrategyOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const promptData = {
+      ...input,
+      isInHouse: input.buildMode === 'in-house',
+      isOutSourced: input.buildMode === 'out-sourced',
+    };
+    const {output} = await prompt(promptData);
     return output!;
   }
 );

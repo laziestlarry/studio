@@ -31,7 +31,7 @@ const GenerateExecutiveBriefInputSchema = z.object({
     }),
     financials: z.object({
         capex: z.array(z.object({ item: z.string(), amount: z.string(), justification: z.string() })),
-        opex: z.array(z.object({ item: z.string(), amount: z.string(), justification: z-string() })),
+        opex: z.array(z.object({ item: z.string(), amount: z.string(), justification: z.string() })),
     }),
   }),
 });

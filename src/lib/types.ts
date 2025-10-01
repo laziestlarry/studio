@@ -4,6 +4,7 @@ import type { BuildAutomatedBusinessStrategyOutput } from '@/ai/flows/build-auto
 import type { GenerateBusinessStructureOutput } from '@/ai/flows/generate-business-structure';
 import type { ExtractTasksFromStrategyOutput } from '@/ai/flows/extract-tasks-from-strategy';
 import type { GenerateChartDataOutput } from '@/ai/flows/generate-chart-data';
+import type { GenerateExecutiveBriefOutput } from '@/ai/flows/generate-executive-brief';
 import { z } from 'zod';
 
 
@@ -20,6 +21,8 @@ export type ActionPlan = ExtractTasksFromStrategyOutput;
 export type Task = ActionPlan['actionPlan'][0]['tasks'][0];
 
 export type ChartData = GenerateChartDataOutput['chartData'];
+
+export type ExecutiveBrief = GenerateExecutiveBriefOutput;
 
 const BuildModeAnalysis = z.object({
     costBenefitAnalysis: z.string(),

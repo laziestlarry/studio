@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, Task, ChartData } from '@/lib/types';
+import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, Task, ChartData, ExecutiveBrief } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -11,6 +11,7 @@ import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Progress } from '@/components/ui/progress';
 import { ProjectManagementViews } from '@/components/project-management-views';
+import ExecutiveBriefDisplay from './executive-brief';
 
 interface OpportunityDashboardProps {
   opportunity: Opportunity;
@@ -19,6 +20,7 @@ interface OpportunityDashboardProps {
   structure: BusinessStructure;
   actionPlan: ActionPlan | null;
   chartData: ChartData | null;
+  executiveBrief: ExecutiveBrief | null;
   onBack: () => void;
   children?: React.ReactNode;
 }
@@ -30,7 +32,7 @@ const chartConfig = {
   },
 };
 
-export default function OpportunityDashboard({ opportunity, analysis, strategy, structure, actionPlan, chartData, onBack, children }: OpportunityDashboardProps) {
+export default function OpportunityDashboard({ opportunity, analysis, strategy, structure, actionPlan, chartData, executiveBrief, onBack, children }: OpportunityDashboardProps) {
   const initialTasks = actionPlan ? actionPlan.actionPlan.flatMap(category => category.tasks) : [];
   const [tasks, setTasks] = useState(initialTasks);
   const [currentView, setCurrentView] = useState('list');
@@ -80,10 +82,12 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
         </Card>
       </div>
       
-      <div className="hidden print:block">
+      <div className="hidden print:block mb-8">
         <h1 className="font-headline text-3xl md:text-4xl font-bold tracking-tight">{opportunity.opportunityName}</h1>
         <p className="text-muted-foreground mt-1 mb-8">{opportunity.description}</p>
       </div>
+      
+      {executiveBrief && <ExecutiveBriefDisplay brief={executiveBrief} />}
 
       <Tabs defaultValue="analysis" className="w-full">
         <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-3 lg:grid-cols-5 print:hidden">

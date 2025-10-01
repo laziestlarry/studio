@@ -9,7 +9,8 @@ import { buildAutomatedBusinessStrategy } from '@/ai/flows/build-automated-busin
 import { extractTasksFromStrategy } from '@/ai/flows/extract-tasks-from-strategy';
 import { generateBuildModeAdvice } from '@/ai/flows/generate-build-mode-advice';
 import { generateChartData } from '@/ai/flows/generate-chart-data';
-import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, BuildModeAdvice, ChartData } from '@/lib/types';
+import { generateExecutiveBrief } from '@/ai/flows/generate-executive-brief';
+import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, BuildModeAdvice, ChartData, ExecutiveBrief } from '@/lib/types';
 import AppHeader from '@/components/app-header';
 import OpportunityDashboard from '@/components/opportunity-dashboard';
 import { OpportunityDashboardSkeleton } from '@/components/opportunity-skeletons';
@@ -31,6 +32,7 @@ export default function DashboardPage() {
   const [buildModeAdvice, setBuildModeAdvice] = useState<BuildModeAdvice | null>(null);
   const [actionPlan, setActionPlan] = useState<ActionPlan | null>(null);
   const [chartData, setChartData] = useState<ChartData | null>(null);
+  const [executiveBrief, setExecutiveBrief] = useState<ExecutiveBrief | null>(null);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -47,12 +49,13 @@ export default function DashboardPage() {
     // Check if a plan has already been generated and stored
     const storedPlan = localStorage.getItem(`plan_${opportunity.opportunityName}`);
      if (storedPlan) {
-      const { analysis, structure, strategy, actionPlan, chartData } = JSON.parse(storedPlan);
+      const { analysis, structure, strategy, actionPlan, chartData, executiveBrief } = JSON.parse(storedPlan);
       setAnalysis(analysis);
       setStructure(structure);
       setStrategy(strategy);
       setActionPlan(actionPlan);
       setChartData(chartData);
+      setExecutiveBrief(executiveBrief);
       setPlanBuilt(true);
     }
     
@@ -68,6 +71,7 @@ export default function DashboardPage() {
         setActionPlan(null);
         setBuildModeAdvice(null);
         setChartData(null);
+        setExecutiveBrief(null);
 
         // Step 1: Run initial analyses in parallel
         const [analysisResult, structureResult] = await Promise.all([
@@ -121,7 +125,7 @@ export default function DashboardPage() {
   };
 
   const handleFinalizePlan = async (buildMode: 'in-house' | 'out-sourced') => {
-    if (!strategy) return;
+    if (!strategy || !analysis || !selectedOpportunity) return;
     try {
       setIsFinalizing(true);
       const actionPlanResult = await extractTasksFromStrategy({
@@ -130,6 +134,22 @@ export default function DashboardPage() {
       });
       setActionPlan(actionPlanResult);
       
+      const briefResult = await generateExecutiveBrief({
+          opportunityName: selectedOpportunity.opportunityName,
+          opportunityDescription: selectedOpportunity.description,
+          marketAnalysis: analysis,
+          businessStrategy: strategy.businessStrategy,
+          actionPlan: {
+              criticalPath: actionPlanResult.criticalPath,
+              financials: {
+                  capex: actionPlanResult.financials.capex,
+                  opex: actionPlanResult.financials.opex,
+              }
+          }
+      });
+      setExecutiveBrief(briefResult);
+
+
       // Store the fully generated plan
        if (selectedOpportunity) {
          localStorage.setItem(`plan_${selectedOpportunity.opportunityName}`, JSON.stringify({
@@ -138,6 +158,7 @@ export default function DashboardPage() {
             strategy,
             actionPlan: actionPlanResult,
             chartData,
+            executiveBrief: briefResult,
         }));
        }
 
@@ -207,6 +228,7 @@ export default function DashboardPage() {
                 strategy={strategy}
                 actionPlan={null}
                 chartData={chartData}
+                executiveBrief={null}
                 onBack={handleBackToOpportunities}
             >
                 {buildModeAdvice && (
@@ -228,6 +250,7 @@ export default function DashboardPage() {
             strategy={strategy}
             actionPlan={actionPlan}
             chartData={chartData}
+            executiveBrief={executiveBrief}
             onBack={handleBackToOpportunities}
         />
     )

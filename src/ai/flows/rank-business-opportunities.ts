@@ -76,14 +76,6 @@ Provide a clear rationale for each rank that explains how the opportunity's pote
   - **Initial Priority**: {{priority}}
 {{/each}}
 `,
-  config: {
-    safetySettings: [
-      {
-        category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-        threshold: 'BLOCK_NONE',
-      },
-    ],
-  },
 });
 
 const rankBusinessOpportunitiesFlow = ai.defineFlow(

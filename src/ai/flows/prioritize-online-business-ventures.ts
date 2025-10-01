@@ -54,14 +54,6 @@ Risk Tolerance: {{{riskTolerance}}}
 Consider ventures such as side-hustles, passive income generators, freelance performance portals, drop shipping e-commerce traders, and social media management.
 Explain the rationale behind the prioritization.
 `,
-  config: {
-    safetySettings: [
-      {
-        category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-        threshold: 'BLOCK_NONE',
-      },
-    ],
-  },
 });
 
 const prioritizeOnlineBusinessVenturesFlow = ai.defineFlow(

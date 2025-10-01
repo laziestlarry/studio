@@ -105,9 +105,13 @@
     display: block !important;
   }
 
-  /* Ensure tab content is visible */
-  [data-orientation="horizontal"] > [role="tabpanel"][aria-hidden="true"],
-  [data-orientation="vertical"] > [role="tabpanel"][aria-hidden="true"] {
+  /* Ensure all tab content is visible for printing */
+  [data-orientation="horizontal"] > [role="tabpanel"],
+  [data-orientation="vertical"] > [role="tabpanel"] {
+    display: block !important;
+  }
+  [data-orientation="horizontal"] > [role="tabpanel"][data-state="inactive"],
+  [data-orientation="vertical"] > [role="tabpanel"][data-state="inactive"] {
     display: block !important;
   }
 }

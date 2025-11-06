@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Opportunity, ActionPlan } from '@/lib/types';
+import type { Opportunity, ActionPlan, BusinessStructure } from '@/lib/types';
 import AppHeader from '@/components/app-header';
 import BuildProgress from '@/components/build-progress';
 import { OpportunityDashboardSkeleton } from '@/components/opportunity-skeletons';
@@ -13,6 +13,7 @@ import { ArrowLeft } from 'lucide-react';
 export default function BuildPage() {
   const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null);
   const [actionPlan, setActionPlan] = useState<ActionPlan | null>(null);
+  const [structure, setStructure] = useState<BusinessStructure | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -32,6 +33,7 @@ export default function BuildPage() {
     }
     const storedPlan = JSON.parse(storedPlanString);
     setActionPlan(storedPlan.actionPlan);
+    setStructure(storedPlan.structure);
     setIsLoading(false);
   }, [router]);
   
@@ -39,12 +41,12 @@ export default function BuildPage() {
     router.push('/dashboard');
   };
 
-  if (isLoading || !selectedOpportunity || !actionPlan) {
+  if (isLoading || !selectedOpportunity || !actionPlan || !structure) {
     return (
         <div className="flex flex-col min-h-screen bg-background">
             <AppHeader />
             <main className="flex-1 container mx-auto px-4 py-8">
-                <OpportunityDashboardSkeleton onBack={handleBackToDashboard} title="Loading Build Environment..." />
+                <OpportunityDashboardSkeleton onBack={handleBackToDashboard} title="Loading AI-Corp Genesis Environment..." />
             </main>
         </div>
     );
@@ -60,12 +62,12 @@ export default function BuildPage() {
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Back to Blueprint
                 </Button>
-                <h1 className="font-headline text-3xl md:text-4xl font-bold tracking-tight">Build Mode: Genesis</h1>
+                <h1 className="font-headline text-3xl md:text-4xl font-bold tracking-tight">AI Empire: Genesis</h1>
                 <p className="text-muted-foreground mt-1">Executing the plan for: {selectedOpportunity.opportunityName}</p>
             </div>
         </div>
 
-        <BuildProgress actionPlan={actionPlan} opportunity={selectedOpportunity} />
+        <BuildProgress actionPlan={actionPlan} structure={structure} opportunity={selectedOpportunity} />
 
       </main>
     </div>

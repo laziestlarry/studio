@@ -58,7 +58,13 @@ export async function generateExecutiveBrief(
 
 const prompt = ai.definePrompt({
   name: 'generateExecutiveBriefPrompt',
-  input: {schema: GenerateExecutiveBriefInputSchema},
+  input: {schema: z.object({
+    opportunityName: z.string(),
+    opportunityDescription: z.string(),
+    marketAnalysis: z.string(),
+    businessStrategy: z.string(),
+    actionPlan: z.string(),
+  })},
   output: {schema: GenerateExecutiveBriefOutputSchema},
   prompt: `You are a world-class business analyst at a top-tier venture capital firm. Your job is to distill a comprehensive business plan into a single, high-impact "Executive Brief" for the managing partners. Your analysis must be ruthless, concise, and focused on the metrics that matter most for an investment decision.
 
@@ -66,9 +72,9 @@ const prompt = ai.definePrompt({
 **Description:** {{{opportunityDescription}}}
 
 **Full Plan Details:**
-- **Market Analysis:** {{{JSON.stringify marketAnalysis}}}
-- **Business Strategy:** {{{JSON.stringify businessStrategy}}}
-- **Action Plan & Financials:** {{{JSON.stringify actionPlan}}}
+- **Market Analysis:** {{{marketAnalysis}}}
+- **Business Strategy:** {{{businessStrategy}}}
+- **Action Plan & Financials:** {{{actionPlan}}}
 
 **Your Task:**
 Generate a structured executive brief by providing the following:
@@ -90,7 +96,14 @@ const generateExecutiveBriefFlow = ai.defineFlow(
     outputSchema: GenerateExecutiveBriefOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const promptInput = {
+      opportunityName: input.opportunityName,
+      opportunityDescription: input.opportunityDescription,
+      marketAnalysis: JSON.stringify(input.marketAnalysis),
+      businessStrategy: JSON.stringify(input.businessStrategy),
+      actionPlan: JSON.stringify(input.actionPlan),
+    };
+    const {output} = await prompt(promptInput);
     return output!;
   }
 );

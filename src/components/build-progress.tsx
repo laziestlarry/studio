@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Check, CheckCircle, CircleDashed, Cpu, PartyPopper, Play, RotateCcw } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { cn } from '@/lib/utils';
 
 export default function BuildProgress({ actionPlan }: { actionPlan: ActionPlan }) {
   const allTasks = actionPlan.actionPlan.flatMap(category => category.tasks);

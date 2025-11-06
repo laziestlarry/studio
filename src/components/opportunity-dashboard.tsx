@@ -12,6 +12,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/
 import { Progress } from '@/components/ui/progress';
 import { ProjectManagementViews } from '@/components/project-management-views';
 import ExecutiveBriefDisplay from './executive-brief';
+import { cn } from '@/lib/utils';
 
 interface OpportunityDashboardProps {
   opportunity: Opportunity;
@@ -62,7 +63,19 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
   const actionPlanTabDisabled = !actionPlan;
   const financialsTabDisabled = !actionPlan;
 
-
+  const analysisAccordionItems = ["demand", "competition", "revenue"];
+  const structureAccordionItems = [
+      ...structure.advisoryCouncil.map((_, i) => `advisor-${i}`), 
+      ...structure.cLevelBoard.map((_, i) => `clevel-${i}`),
+      ...structure.projectManagementFramework.phases.map((_, i) => `phase-${i}`),
+      ...structure.departments.map((_, i) => `dept-${i}`)
+    ];
+  const strategyAccordionItems = ["marketing", "operations", "financials"];
+  const financialAccordionItems = [
+      ...actionPlan?.financials.capex.map((_, i) => `capex-${i}`) || [],
+      ...actionPlan?.financials.opex.map((_, i) => `opex-${i}`) || []
+    ];
+    
   return (
     <div className="animate-in fade-in-50 duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 print:hidden">
@@ -109,8 +122,8 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
         </TabsList>
 
         {children}
-
-        <TabsContent value="analysis" className="mt-6">
+        <div className="print-visible-tabs">
+        <TabsContent value="analysis" className="mt-6 print:break-after-page">
           <div className="space-y-6">
             <Card className="print:border-none print:shadow-none">
               <CardHeader>
@@ -120,7 +133,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Accordion type="single" collapsible className="w-full space-y-4 print-visible">
+                <Accordion type="multiple" defaultValue={analysisAccordionItems} className="w-full space-y-4 print-visible">
                     <AccordionItem value="demand" className="border rounded-lg">
                         <AccordionTrigger className="p-4 font-semibold text-lg flex items-center gap-3">
                             <Users className="h-5 w-5 text-primary" /> Demand Forecast
@@ -170,7 +183,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
             </Card>
           </div>
         </TabsContent>
-        <TabsContent value="structure" className="mt-6">
+        <TabsContent value="structure" className="mt-6 print:break-after-page">
             <div className="space-y-6">
                  <Card className="print:border-none print:shadow-none">
                     <CardHeader>
@@ -228,9 +241,9 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                <Accordion type="single" collapsible className="print-visible">
+                                <Accordion type="multiple" defaultValue={structureAccordionItems} className="print-visible">
                                         {structure.advisoryCouncil.map((advisor, index) => (
-                                            <AccordionItem key={index} value={`item-${index}`}>
+                                            <AccordionItem key={index} value={`advisor-${index}`}>
                                                 <AccordionTrigger className="text-base font-semibold">
                                                 <div className="flex items-center gap-3">
                                                     {getIconForRole(advisor.role)}
@@ -255,9 +268,9 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                <Accordion type="single" collapsible className="print-visible">
+                                <Accordion type="multiple" defaultValue={structureAccordionItems} className="print-visible">
                                     {structure.cLevelBoard.map((role, index) => (
-                                        <AccordionItem key={index} value={`item-${index}`}>
+                                        <AccordionItem key={index} value={`clevel-${index}`}>
                                             <AccordionTrigger className="text-base font-semibold">
                                                 {role.role}
                                             </AccordionTrigger>
@@ -278,9 +291,9 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                     <CardDescription>{structure.projectManagementFramework.methodology}</CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                <Accordion type="single" collapsible defaultValue="item-0" className="print-visible">
+                                <Accordion type="multiple" defaultValue={structureAccordionItems} className="print-visible">
                                         {structure.projectManagementFramework.phases.map((phase, index) => (
-                                            <AccordionItem key={index} value={`item-${index}`}>
+                                            <AccordionItem key={index} value={`phase-${index}`}>
                                                 <AccordionTrigger className="text-base font-semibold">{phase.phaseName}</AccordionTrigger>
                                                 <AccordionContent className="pt-2 text-sm space-y-3">
                                                 <p className="text-muted-foreground">{phase.description}</p>
@@ -301,9 +314,9 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                 <CardTitle className="font-headline">AI-Powered Departments</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <Accordion type="single" collapsible className="w-full print-visible">
+                                <Accordion type="multiple" defaultValue={structureAccordionItems} className="w-full print-visible">
                                     {structure.departments.map((dept, index) => (
-                                        <AccordionItem key={index} value={`item-${index}`}>
+                                        <AccordionItem key={index} value={`dept-${index}`}>
                                             <AccordionTrigger className="text-lg font-semibold">{dept.name}</AccordionTrigger>
                                             <AccordionContent className="pt-2 text-base space-y-6">
                                                 <div>
@@ -346,7 +359,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                  </Card>
             </div>
         </TabsContent>
-        <TabsContent value="strategy" className="mt-6">
+        <TabsContent value="strategy" className="mt-6 print:break-after-page">
            <div className="space-y-6">
             <Card className="print:border-none print:shadow-none">
                 <CardHeader>
@@ -371,7 +384,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                         <CardTitle className="font-headline">Strategic Pillars</CardTitle>
                     </CardHeader>
                     <CardContent className="p-6">
-                        <Accordion type="single" collapsible defaultValue="marketing" className="print-visible">
+                        <Accordion type="multiple" defaultValue={strategyAccordionItems} className="print-visible">
                         <AccordionItem value="marketing">
                             <AccordionTrigger className="text-lg font-semibold">
                             <div className="flex items-center gap-3">
@@ -412,7 +425,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
             </Card>
            </div>
         </TabsContent>
-         <TabsContent value="action-plan" className="mt-6">
+         <TabsContent value="action-plan" className="mt-6 print:break-after-page">
           {actionPlan && (
             <div className="space-y-6">
                 <Card className="print:border-none print:shadow-none">
@@ -464,7 +477,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
             </div>
           )}
         </TabsContent>
-         <TabsContent value="financials" className="mt-6">
+         <TabsContent value="financials" className="mt-6 print:break-after-page">
             {actionPlan && (
                 <div className="space-y-6">
                     <Card className="print:border-none print:shadow-none">
@@ -482,9 +495,9 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                         <CardDescription>One-time costs to get the business started.</CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <Accordion type="single" collapsible className="print-visible">
+                                        <Accordion type="multiple" defaultValue={financialAccordionItems} className="print-visible">
                                             {actionPlan.financials.capex.map((item, index) => (
-                                                <AccordionItem key={index} value={`item-${index}`}>
+                                                <AccordionItem key={index} value={`capex-${index}`}>
                                                     <AccordionTrigger className="text-base font-semibold">
                                                     <div className="flex justify-between w-full pr-4">
                                                         <span>{item.item}</span>
@@ -505,9 +518,9 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                         <CardDescription>Recurring monthly or annual costs to run the business.</CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <Accordion type="single" collapsible className="print-visible">
+                                        <Accordion type="multiple" defaultValue={financialAccordionItems} className="print-visible">
                                             {actionPlan.financials.opex.map((item, index) => (
-                                                <AccordionItem key={index} value={`item-${index}`}>
+                                                <AccordionItem key={index} value={`opex-${index}`}>
                                                     <AccordionTrigger className="text-base font-semibold">
                                                     <div className="flex justify-between w-full pr-4">
                                                         <span>{item.item}</span>
@@ -542,9 +555,8 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                 </div>
             )}
         </TabsContent>
+        </div>
       </Tabs>
     </div>
   );
 }
-
-    

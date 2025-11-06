@@ -91,6 +91,10 @@
   .print\:text-black {
     color: black !important;
   }
+  .print\:break-after-page {
+    page-break-after: always;
+  }
+
   /* Ensure accordion content is visible */
   .print-visible [data-state="closed"] {
     display: block !important;
@@ -106,12 +110,11 @@
   }
 
   /* Ensure all tab content is visible for printing */
-  [data-orientation="horizontal"] > [role="tabpanel"],
-  [data-orientation="vertical"] > [role="tabpanel"] {
+  .print-visible-tabs > [role="tabpanel"] {
     display: block !important;
+    page-break-before: always;
   }
-  [data-orientation="horizontal"] > [role="tabpanel"][data-state="inactive"],
-  [data-orientation="vertical"] > [role="tabpanel"][data-state="inactive"] {
+  .print-visible-tabs > [role="tabpanel"][data-state="inactive"] {
     display: block !important;
   }
 }

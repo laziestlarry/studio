@@ -130,7 +130,7 @@ const KanbanView = ({ categorizedTasks, onToggleTask }: { categorizedTasks: Acti
 };
 
 const GanttView = ({ tasks }: { tasks: Task[] }) => {
-  const today = new date();
+  const today = new Date();
   const startDate = tasks.length > 0 ? new Date(Math.min(...tasks.map(t => new Date(t.startDate).getTime()))) : today;
   const endDate = tasks.length > 0 ? new Date(Math.max(...tasks.map(t => new Date(t.endDate).getTime()))) : new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
 

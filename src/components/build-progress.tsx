@@ -2,21 +2,22 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import type { ActionPlan, Task } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import type { ActionPlan, Task, Opportunity } from '@/lib/types';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { Check, CheckCircle, CircleDashed, Cpu, PartyPopper, Play, RotateCcw } from 'lucide-react';
+import { Check, CheckCircle, CircleDashed, Cpu, PartyPopper, Play, RotateCcw, Link, Server, GitBranch, ArrowRight } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
-export default function BuildProgress({ actionPlan }: { actionPlan: ActionPlan }) {
+export default function BuildProgress({ actionPlan, opportunity }: { actionPlan: ActionPlan, opportunity: Opportunity }) {
   const allTasks = actionPlan.actionPlan.flatMap(category => category.tasks);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [executionLog, setExecutionLog] = useState<string[]>(['Genesis build sequence initiated...']);
   const [isComplete, setIsComplete] = useState(false);
   const logContainerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const tasksToExecute = allTasks.filter(task => !completedTasks.includes(task.id));
   const progressPercentage = (completedTasks.length / allTasks.length) * 100;
@@ -45,6 +46,10 @@ export default function BuildProgress({ actionPlan }: { actionPlan: ActionPlan }
     setExecutionLog(['Genesis build sequence initiated...']);
     setIsComplete(false);
   };
+  
+  const handleVisitApp = () => {
+    router.push('/dashboard');
+  }
 
   const getTaskStatusIcon = (taskId: string) => {
     if (completedTasks.includes(taskId)) {
@@ -56,6 +61,8 @@ export default function BuildProgress({ actionPlan }: { actionPlan: ActionPlan }
     return <CircleDashed className="h-5 w-5 text-muted-foreground" />;
   }
 
+  const generatedUrl = `https://${opportunity.opportunityName.toLowerCase().replace(/\s+/g, '-')}.genesis.app`;
+
   if (isComplete) {
     return (
         <Card className="animate-in fade-in-50 duration-500 text-center">
@@ -64,10 +71,41 @@ export default function BuildProgress({ actionPlan }: { actionPlan: ActionPlan }
                     <PartyPopper className="h-12 w-12 text-green-500" />
                 </div>
                 <CardTitle className="font-headline text-3xl mt-4">Genesis Complete!</CardTitle>
+                 <CardDescription>The AI has finished executing the build plan. Your new business is now live.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-                <p className="text-muted-foreground">The AI has finished executing the build plan. Your business is ready to launch.</p>
-                <Button onClick={handleReset}>
+            <CardContent className="space-y-6">
+                <Card className="text-left">
+                    <CardHeader>
+                        <CardTitle className="text-xl">Your New App is Live</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex items-center gap-4 bg-muted p-3 rounded-lg">
+                            <Link className="h-5 w-5 text-primary"/>
+                            <a href="#" onClick={(e) => { e.preventDefault(); handleVisitApp(); }} className="font-mono text-sm font-semibold text-primary truncate hover:underline">{generatedUrl}</a>
+                        </div>
+                        <Button onClick={handleVisitApp} className="w-full">
+                            Visit Your App Dashboard <ArrowRight className="ml-2 h-4 w-4"/>
+                        </Button>
+                    </CardContent>
+                </Card>
+                 <Card className="text-left">
+                    <CardHeader>
+                        <CardTitle className="text-xl">Automated Systems Status</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                       <div className="flex items-center gap-3">
+                           <GitBranch className="h-5 w-5 text-green-500" />
+                           <span className="font-medium">CI/CD Pipeline:</span>
+                           <span className="text-green-500 font-semibold ml-auto">Active</span>
+                       </div>
+                        <div className="flex items-center gap-3">
+                           <Server className="h-5 w-5 text-green-500" />
+                           <span className="font-medium">Scheduled Workflows:</span>
+                           <span className="text-green-500 font-semibold ml-auto">Running</span>
+                       </div>
+                    </CardContent>
+                </Card>
+                <Button onClick={handleReset} variant="outline" className="w-full">
                     <RotateCcw className="mr-2 h-4 w-4"/>
                     Run Simulation Again
                 </Button>

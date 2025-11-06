@@ -65,7 +65,7 @@ export default function BuildPage() {
             </div>
         </div>
 
-        <BuildProgress actionPlan={actionPlan} />
+        <BuildProgress actionPlan={actionPlan} opportunity={selectedOpportunity} />
 
       </main>
     </div>

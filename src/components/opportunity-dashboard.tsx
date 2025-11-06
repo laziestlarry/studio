@@ -1,12 +1,13 @@
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, Task, ChartData, ExecutiveBrief } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ArrowLeft, BarChart3, Bot, BrainCircuit, Building2, CheckSquare, Clock, Cpu, DollarSign, FileCog, GanttChart, Gavel, Kanban, Lightbulb, LineChart, Milestone, Scale, Search, ShieldQuestion, Target, User, Users, Users2 } from 'lucide-react';
+import { ArrowLeft, BarChart3, Bot, BrainCircuit, Building2, CheckSquare, Clock, Cpu, DollarSign, FileCog, GanttChart, Gavel, Kanban, Lightbulb, LineChart, Milestone, Scale, Search, ShieldQuestion, Target, User, Users, Users2, Zap } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Progress } from '@/components/ui/progress';
@@ -37,6 +38,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
   const initialTasks = actionPlan ? actionPlan.actionPlan.flatMap(category => category.tasks) : [];
   const [tasks, setTasks] = useState(initialTasks);
   const [currentView, setCurrentView] = useState('list');
+  const router = useRouter();
 
 
   const handleToggleTask = (id: string) => {
@@ -58,6 +60,10 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
     if (lowerRole.includes('philosopher') || lowerRole.includes('ethic')) return <BrainCircuit className="h-5 w-5 text-primary" />;
     if (lowerRole.includes('audit')) return <Search className="h-5 w-5 text-primary" />;
     return <User className="h-5 w-5 text-primary" />;
+  };
+
+  const handleIgniteGenesis = () => {
+    router.push('/build');
   };
 
   const actionPlanTabDisabled = !actionPlan;
@@ -101,6 +107,22 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
       </div>
       
       {executiveBrief && <ExecutiveBriefDisplay brief={executiveBrief} />}
+
+      {actionPlan && (
+        <Card className="mb-8 bg-primary/10 border-primary/20 text-center">
+            <CardContent className="p-6">
+                 <div className="flex flex-col items-center gap-4">
+                     <h2 className="font-headline text-2xl font-bold">Blueprint Complete</h2>
+                    <p className="text-muted-foreground max-w-xl mx-auto">Your strategic blueprint is ready. The next step is to execute the plan and bring your vision to life.</p>
+                    <Button size="lg" onClick={handleIgniteGenesis}>
+                        <Zap className="mr-2 h-5 w-5" />
+                        Build the Genesis
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
+      )}
+
 
       <Tabs defaultValue="analysis" className="w-full">
         <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-3 lg:grid-cols-5 print:hidden">

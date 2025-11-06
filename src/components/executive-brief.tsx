@@ -1,10 +1,12 @@
+
 'use client';
 
 import type { ExecutiveBrief } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Clock, TrendingUp, XCircle } from 'lucide-react';
-import { Gauge, GaugeCircle } from 'lucide-react';
+import { CheckCircle, Clock, TrendingUp, XCircle, GaugeCircle } from 'lucide-react';
+import { PolarGrid, RadialBar, RadialBarChart } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
 
 const BriefGadget = ({ title, value, icon }: { title: string; value: React.ReactNode; icon: React.ReactNode }) => (
@@ -13,21 +15,47 @@ const BriefGadget = ({ title, value, icon }: { title: string; value: React.React
             {icon}
             <h4 className="font-semibold text-sm">{title}</h4>
         </div>
-        <div className="text-2xl font-bold text-foreground">{value}</div>
+        <div className="text-2xl font-bold text-foreground flex items-center justify-center h-24">{value}</div>
     </div>
 );
 
 const ViabilityGauge = ({ score }: { score: number }) => {
-    const rotation = -90 + (score / 10) * 180;
+    const chartData = [{ name: 'score', value: score * 10, fill: 'hsl(var(--primary))' }];
+    
     return (
-        <div className="relative w-24 h-24">
-            <Gauge
-                value={score * 10}
-                size="lg"
-                gap={8}
-                showValue
-                className="text-primary"
-                />
+        <div className="relative w-24 h-24 flex items-center justify-center">
+            <ChartContainer
+                config={{
+                    score: {
+                        label: 'Score',
+                        color: 'hsl(var(--chart-1))',
+                    },
+                }}
+                className="mx-auto aspect-square h-full w-full"
+            >
+                <RadialBarChart
+                    data={chartData}
+                    startAngle={-210}
+                    endAngle={30}
+                    innerRadius={80}
+                    outerRadius={100}
+                    barSize={10}
+                >
+                    <PolarGrid
+                        gridType="circle"
+                        radialLines={false}
+                        stroke="none"
+                        className="fill-muted"
+                    />
+                    <RadialBar dataKey="value" background cornerRadius={5} />
+                </RadialBarChart>
+            </ChartContainer>
+             <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-2xl font-bold text-foreground">
+                    {score.toFixed(1)}
+                </span>
+                <span className="text-xs text-muted-foreground -mt-1">/ 10</span>
+            </div>
         </div>
     );
 };

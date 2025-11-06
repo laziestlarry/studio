@@ -22,13 +22,31 @@ const mapCategoryToDept = (category: string): string => {
     return mapping[category] || 'Strategy & Innovation';
 };
 
+const getDeptIcon = (deptName: string) => {
+    const lower = deptName.toLowerCase();
+    if (lower.includes('tech')) return <GitBranch className="h-5 w-5 text-primary"/>;
+    if (lower.includes('strategy')) return <Rocket className="h-5 w-5 text-primary"/>;
+    if (lower.includes('data')) return <Server className="h-5 w-5 text-primary"/>;
+    return <Building2 className="h-5 w-5 text-primary"/>
+}
+
+const getLogMessage = (task: Task, departmentName: string): string => {
+    const title = task.title.toLowerCase();
+    if (title.includes('payment') || title.includes('financial')) return `[OK] ${departmentName}: Stripe & PayPal API keys configured and linked. Webhooks established for transaction monitoring.`;
+    if (title.includes('quality check')) return `[OK] ${departmentName}: Automated QA pipeline integrated. Pre-listing validation checks are now active.`;
+    if (title.includes('assurance')) return `[OK] ${departmentName}: Final customer delivery approval workflow is in place and linked to CRM.`;
+    if (title.includes('crm') || title.includes('customer service')) return `[OK] ${departmentName}: Customer service lifecycle automated. Zendesk integration is live.`;
+    if (title.includes('sales channel') || title.includes('etsy') || title.includes('shopify')) return `[OK] ${departmentName}: Multi-channel sales sync established. Inventory and pricing are now mirrored across platforms.`;
+    return `[OK] ${departmentName}: Task "${task.title}" completed successfully. System performance nominal.`
+}
+
 export default function BuildProgress({ actionPlan, structure, opportunity }: { actionPlan: ActionPlan, structure: BusinessStructure, opportunity: Opportunity }) {
   const allTasks = actionPlan.actionPlan.flatMap(category => 
     category.tasks.map(task => ({ ...task, department: mapCategoryToDept(task.category) }))
   );
 
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
-  const [executionLog, setExecutionLog] = useState<string[]>(['[SYSTEM] AI-Corp Genesis sequence initiated...']);
+  const [executionLog, setExecutionLog] = useState<string[]>(['[SYSTEM] AI-Corp Genesis sequence initiated... Standby for Commander directives.']);
   const [isBuildFinished, setIsBuildFinished] = useState(false);
   const [isLaunched, setIsLaunched] = useState(false);
   const logContainerRef = useRef<HTMLDivElement>(null);
@@ -61,27 +79,31 @@ export default function BuildProgress({ actionPlan, structure, opportunity }: { 
   const handleExecuteNext = () => {
     if (tasksToExecute.length > 0) {
       const nextTask = tasksToExecute[0];
-      setExecutionLog(prev => [...prev, `[COMMAND] Directive issued to ${nextTask.department}...`]);
+      setExecutionLog(prev => [...prev, `[COMMAND] Directive issued to ${nextTask.department}. Executing: ${nextTask.title}`]);
       setTimeout(() => {
+        const logMessage = getLogMessage(nextTask, nextTask.department);
         setCompletedTasks(prev => [...prev, nextTask.id]);
-        setExecutionLog(prev => [...prev, `[DONE] ${nextTask.department} completed: ${nextTask.title}`]);
+        setExecutionLog(prev => [...prev, logMessage]);
         
         if (tasksToExecute.length === 1) {
           setIsBuildFinished(true);
-          setExecutionLog(prev => [...prev, `[SYSTEM] All build tasks complete. AI-Corp systems are configured and ready for launch.`]);
+          setExecutionLog(prev => [...prev, `[SYSTEM] All build directives complete. AI-Corp systems configured. Awaiting launch command.`]);
         }
-      }, 300);
+      }, 500);
     }
   };
 
   const handleLaunch = () => {
-    setExecutionLog(prev => [...prev, `[LAUNCH] Genesis Protocol initiated by Commander. Activating all systems...`]);
-    setIsLaunched(true);
+    setExecutionLog(prev => [...prev, `[LAUNCH] Genesis Protocol initiated by Commander. Activating all systems... Synchronization with global networks in progress...`]);
+    setTimeout(() => {
+        setIsLaunched(true);
+        setExecutionLog(prev => [...prev, `[LIVE] AI Empire is operational. Mission Control interface active.`]);
+    }, 1000);
   }
 
   const handleReset = () => {
     setCompletedTasks([]);
-    setExecutionLog(['[SYSTEM] AI-Corp Genesis sequence initiated...']);
+    setExecutionLog(['[SYSTEM] AI-Corp Genesis sequence re-initiated... Standby for Commander directives.']);
     setIsBuildFinished(false);
     setIsLaunched(false);
   };
@@ -115,7 +137,7 @@ export default function BuildProgress({ actionPlan, structure, opportunity }: { 
             <CardContent className="space-y-6">
                 <Card className="text-left">
                     <CardHeader>
-                        <CardTitle className="text-xl">Your New App is Live</CardTitle>
+                        <CardTitle className="text-xl">Mission Control</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="flex items-center gap-4 bg-muted p-3 rounded-lg">
@@ -123,7 +145,7 @@ export default function BuildProgress({ actionPlan, structure, opportunity }: { 
                             <a href="#" onClick={(e) => { e.preventDefault(); handleVisitApp(); }} className="font-mono text-sm font-semibold text-primary truncate hover:underline">{generatedUrl}</a>
                         </div>
                         <Button onClick={handleVisitApp} className="w-full">
-                            Access Mission Control <ArrowRight className="ml-2 h-4 w-4"/>
+                            Access Your Dashboard <ArrowRight className="ml-2 h-4 w-4"/>
                         </Button>
                     </CardContent>
                 </Card>
@@ -164,8 +186,8 @@ export default function BuildProgress({ actionPlan, structure, opportunity }: { 
           <Accordion type="multiple" defaultValue={tasksByDepartment.map(d => d.name)} className="w-full">
             {tasksByDepartment.map(dept => (
               <AccordionItem key={dept.name} value={dept.name}>
-                <AccordionTrigger className="text-lg font-semibold flex items-center gap-3">
-                    <Building2 className="h-5 w-5 text-primary"/>
+                <AccordionTrigger className="text-lg font-semibold flex items-center gap-3 hover:no-underline">
+                    {getDeptIcon(dept.name)}
                     {dept.name}
                 </AccordionTrigger>
                 <AccordionContent>
@@ -202,7 +224,7 @@ export default function BuildProgress({ actionPlan, structure, opportunity }: { 
                   Launch Genesis Protocol
               </Button>
             ) : (
-              <Button className="w-full" onClick={handleExecuteNext}>
+              <Button className="w-full" onClick={handleExecuteNext} disabled={tasksToExecute.length === 0}>
                   <Play className="mr-2 h-4 w-4"/>
                   Execute Next Directive
               </Button>
@@ -214,17 +236,29 @@ export default function BuildProgress({ actionPlan, structure, opportunity }: { 
                 <CardTitle>AI-Core Execution Log</CardTitle>
             </CardHeader>
             <CardContent>
-                <div ref={logContainerRef} className="h-64 bg-muted/50 rounded-md p-4 overflow-y-auto font-mono text-xs space-y-2">
-                    {executionLog.map((log, index) => (
-                        <p key={index} className="flex items-start">
-                            <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 shrink-0"/>
-                            <span>{log}</span>
-                        </p>
-                    ))}
+                <div ref={logContainerRef} className="h-96 bg-muted/50 rounded-md p-4 overflow-y-auto font-mono text-xs space-y-2">
+                    {executionLog.map((log, index) => {
+                        const isCommand = log.startsWith('[COMMAND]');
+                        const isSystem = log.startsWith('[SYSTEM]');
+                        const isLaunch = log.startsWith('[LAUNCH]');
+                        const isLive = log.startsWith('[LIVE]');
+                        const isOk = log.startsWith('[OK]');
+                        
+                        return (
+                            <p key={index} className={cn("flex items-start", {
+                                'text-primary font-semibold': isCommand,
+                                'text-accent': isSystem || isLaunch,
+                                'text-green-400': isLive || isOk,
+                            })}>
+                                <span className="w-20 shrink-0">{isOk ? '[OK]' : isCommand ? '[COMMAND]' : isSystem ? '[SYSTEM]' : isLaunch ? '[LAUNCH]' : isLive ? '[LIVE]' : ''}</span>
+                                <span className="flex-1">{log.substring(log.indexOf(']') + 2)}</span>
+                            </p>
+                        )
+                    })}
                      {!isBuildFinished && tasksToExecute.length > 0 && (
                        <p className="flex items-start animate-pulse">
-                            <Cpu className="h-3 w-3 text-primary mr-2 mt-0.5 shrink-0"/>
-                            <span>Awaiting next directive from Commander for task: {tasksToExecute[0].title}</span>
+                            <span className="w-20 shrink-0 text-muted-foreground">[AWAITING]</span>
+                            <span className="flex-1 text-muted-foreground">Commander directive for task: {tasksToExecute[0].title}</span>
                         </p>
                     )}
                 </div>
@@ -234,3 +268,5 @@ export default function BuildProgress({ actionPlan, structure, opportunity }: { 
     </div>
   );
 }
+
+    

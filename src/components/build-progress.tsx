@@ -6,7 +6,7 @@ import type { ActionPlan, Task, Opportunity } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { Check, CheckCircle, CircleDashed, Cpu, PartyPopper, Play, RotateCcw, Link, Server, GitBranch, ArrowRight } from 'lucide-react';
+import { Check, CheckCircle, CircleDashed, Cpu, PartyPopper, Play, RotateCcw, Link, Server, GitBranch, ArrowRight, Rocket } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
@@ -15,7 +15,8 @@ export default function BuildProgress({ actionPlan, opportunity }: { actionPlan:
   const allTasks = actionPlan.actionPlan.flatMap(category => category.tasks);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [executionLog, setExecutionLog] = useState<string[]>(['Genesis build sequence initiated...']);
-  const [isComplete, setIsComplete] = useState(false);
+  const [isBuildFinished, setIsBuildFinished] = useState(false);
+  const [isLaunched, setIsLaunched] = useState(false);
   const logContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -35,19 +36,26 @@ export default function BuildProgress({ actionPlan, opportunity }: { actionPlan:
       setExecutionLog(prev => [...prev, `[DONE] ${nextTask.title}`]);
       
       if (tasksToExecute.length === 1) {
-        setIsComplete(true);
-         setExecutionLog(prev => [...prev, `✨ Genesis build complete! Your new business is ready for launch.`]);
+        setIsBuildFinished(true);
+        setExecutionLog(prev => [...prev, `All build tasks complete. Systems are configured and ready for launch.`]);
       }
     }
   };
 
+  const handleLaunch = () => {
+    setExecutionLog(prev => [...prev, `LAUNCH COMMAND ISSUED. Activating all systems...`]);
+    setIsLaunched(true);
+  }
+
   const handleReset = () => {
     setCompletedTasks([]);
     setExecutionLog(['Genesis build sequence initiated...']);
-    setIsComplete(false);
+    setIsBuildFinished(false);
+    setIsLaunched(false);
   };
   
   const handleVisitApp = () => {
+    // For now, this navigates back to the main dashboard which acts as the app's control panel.
     router.push('/dashboard');
   }
 
@@ -55,7 +63,7 @@ export default function BuildProgress({ actionPlan, opportunity }: { actionPlan:
     if (completedTasks.includes(taskId)) {
         return <CheckCircle className="h-5 w-5 text-green-500" />;
     }
-    if (tasksToExecute.length > 0 && tasksToExecute[0].id === taskId) {
+    if (!isBuildFinished && tasksToExecute.length > 0 && tasksToExecute[0].id === taskId) {
         return <Cpu className="h-5 w-5 text-primary animate-pulse" />;
     }
     return <CircleDashed className="h-5 w-5 text-muted-foreground" />;
@@ -63,14 +71,14 @@ export default function BuildProgress({ actionPlan, opportunity }: { actionPlan:
 
   const generatedUrl = `https://${opportunity.opportunityName.toLowerCase().replace(/\s+/g, '-')}.genesis.app`;
 
-  if (isComplete) {
+  if (isLaunched) {
     return (
         <Card className="animate-in fade-in-50 duration-500 text-center">
             <CardHeader>
                 <div className="mx-auto bg-green-100 dark:bg-green-900/50 rounded-full p-4 w-fit">
                     <PartyPopper className="h-12 w-12 text-green-500" />
                 </div>
-                <CardTitle className="font-headline text-3xl mt-4">Genesis Complete!</CardTitle>
+                <CardTitle className="font-headline text-3xl mt-4">Genesis Complete: App is Live!</CardTitle>
                  <CardDescription>The AI has finished executing the build plan. Your new business is now live.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -119,6 +127,7 @@ export default function BuildProgress({ actionPlan, opportunity }: { actionPlan:
       <Card className="lg:col-span-2">
         <CardHeader>
           <CardTitle>Action Plan Execution</CardTitle>
+          <CardDescription>The AI will execute each task in the plan. Click "Execute Next Task" to proceed through the build sequence.</CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion type="multiple" defaultValue={actionPlan.actionPlan.map(c => c.categoryTitle)}>
@@ -146,17 +155,24 @@ export default function BuildProgress({ actionPlan, opportunity }: { actionPlan:
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Build Progress</CardTitle>
+            <CardTitle>Build Control</CardTitle>
           </CardHeader>
           <CardContent>
-             <div className="flex items-center gap-4">
+             <div className="flex items-center gap-4 mb-4">
                 <Progress value={progressPercentage} className="flex-1"/>
                 <span className="font-bold text-lg">{Math.round(progressPercentage)}%</span>
             </div>
-            <Button className="w-full mt-6" onClick={handleExecuteNext} disabled={isComplete}>
-                <Play className="mr-2 h-4 w-4"/>
-                Execute Next Task
-            </Button>
+            {isBuildFinished ? (
+              <Button className="w-full" size="lg" onClick={handleLaunch}>
+                  <Rocket className="mr-2 h-5 w-5" />
+                  Launch App
+              </Button>
+            ) : (
+              <Button className="w-full" onClick={handleExecuteNext}>
+                  <Play className="mr-2 h-4 w-4"/>
+                  Execute Next Task
+              </Button>
+            )}
           </CardContent>
         </Card>
         <Card>
@@ -171,6 +187,12 @@ export default function BuildProgress({ actionPlan, opportunity }: { actionPlan:
                             <span>{log}</span>
                         </p>
                     ))}
+                     {!isBuildFinished && tasksToExecute.length > 0 && (
+                       <p className="flex items-start animate-pulse">
+                            <Cpu className="h-3 w-3 text-primary mr-2 mt-0.5 shrink-0"/>
+                            <span>Awaiting next command: {tasksToExecute[0].title}</span>
+                        </p>
+                    )}
                 </div>
             </CardContent>
         </Card>

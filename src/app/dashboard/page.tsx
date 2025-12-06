@@ -162,7 +162,7 @@ export default function DashboardPage() {
   };
 
   const handleFinalizePlan = async (buildMode: 'in-house' | 'out-sourced') => {
-    if (!strategy || !analysis || !selectedOpportunity) return;
+    if (!strategy || !analysis || !selectedOpportunity || !structure || !buildModeAdvice) return;
     try {
       setCurrentStep('finalizing');
       const actionPlanResult = await extractTasksFromStrategy({

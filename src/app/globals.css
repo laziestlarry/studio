@@ -10,21 +10,21 @@
     --card-foreground: 222 47% 11%;
     --popover: 222 83% 98%;
     --popover-foreground: 222 47% 11%;
-    --primary: 221 83% 53%;
+    --primary: 180 100% 25%;
     --primary-foreground: 210 40% 98%;
     --secondary: 217 33% 88%;
     --secondary-foreground: 222 47% 11%;
     --muted: 217 33% 88%;
     --muted-foreground: 215 20% 45%;
-    --accent: 43 96% 56%;
-    --accent-foreground: 43 96% 10%;
+    --accent: 33 82% 61%;
+    --accent-foreground: 33 96% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 217 33% 80%;
     --input: 217 33% 88%;
-    --ring: 221 83% 53%;
-    --chart-1: 221 83% 53%;
-    --chart-2: 43 96% 56%;
+    --ring: 180 100% 25%;
+    --chart-1: 180 100% 25%;
+    --chart-2: 33 82% 61%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
@@ -32,27 +32,27 @@
   }
 
   .dark {
-    --background: 222 47% 11%;
+    --background: 204 10% 10%;
     --foreground: 210 40% 98%;
-    --card: 222 47% 14%;
+    --card: 204 10% 15%;
     --card-foreground: 210 40% 98%;
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-    --primary: 221 83% 63%;
-    --primary-foreground: 221 83% 10%;
+    --primary: 180 100% 35%;
+    --primary-foreground: 180 100% 95%;
     --secondary: 217 33% 17%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
-    --accent: 43 96% 56%;
-    --accent-foreground: 43 96% 10%;
+    --accent: 33 92% 66%;
+    --accent-foreground: 33 96% 10%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
     --border: 217 33% 27%;
     --input: 217 33% 17%;
-    --ring: 221 83% 63%;
-    --chart-1: 221 83% 63%;
-    --chart-2: 43 96% 56%;
+    --ring: 180 100% 35%;
+    --chart-1: 180 100% 35%;
+    --chart-2: 33 92% 66%;
   }
 }
 
@@ -106,6 +106,9 @@
      overflow: visible !important;
   }
   .print-visible [data-radix-collapsible-content] {
+    display: block !important;
+  }
+   .print-visible-accordion [data-state="closed"] {
     display: block !important;
   }
 

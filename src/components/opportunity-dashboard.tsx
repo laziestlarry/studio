@@ -71,15 +71,19 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
 
   const analysisAccordionItems = ["demand", "competition", "revenue"];
   const structureAccordionItems = [
+      "commander",
+      "aicore",
+      ...structure.okrs.map((_,i) => `okr-${i}`),
       ...structure.advisoryCouncil.map((_, i) => `advisor-${i}`), 
       ...structure.cLevelBoard.map((_, i) => `clevel-${i}`),
       ...structure.projectManagementFramework.phases.map((_, i) => `phase-${i}`),
-      ...structure.departments.map((_, i) => `dept-${i}`)
+      ...structure.departments.map((d) => d.name)
     ];
   const strategyAccordionItems = ["marketing", "operations", "financials"];
   const financialAccordionItems = [
       ...actionPlan?.financials.capex.map((_, i) => `capex-${i}`) || [],
-      ...actionPlan?.financials.opex.map((_, i) => `opex-${i}`) || []
+      ...actionPlan?.financials.opex.map((_, i) => `opex-${i}`) || [],
+      ...actionPlan?.financials.investmentOptions.map((_, i) => `invest-${i}`) || []
     ];
     
   return (
@@ -155,7 +159,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Accordion type="multiple" defaultValue={analysisAccordionItems} className="w-full space-y-4 print-visible">
+                <Accordion type="multiple" defaultValue={analysisAccordionItems} className="w-full space-y-4 print-visible-accordion">
                     <AccordionItem value="demand" className="border rounded-lg">
                         <AccordionTrigger className="p-4 font-semibold text-lg flex items-center gap-3">
                             <Users className="h-5 w-5 text-primary" /> Demand Forecast
@@ -215,168 +219,170 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                       <Card>
-                            <CardHeader>
-                                <CardTitle className="font-headline">Corporate OKRs</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {structure.okrs.map((okr, index) => (
-                                    <div key={index} className="p-4 border rounded-lg bg-card/50">
-                                    <h4 className="font-semibold text-lg">{okr.objective}</h4>
-                                    <ul className="list-disc list-inside mt-2 text-muted-foreground space-y-1">
-                                        {okr.keyResults.map((kr, i) => <li key={i}>{kr}</li>)}
-                                    </ul>
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
+                        <Accordion type="multiple" defaultValue={structureAccordionItems} className="print-visible-accordion">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="font-headline">Corporate OKRs</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    {structure.okrs.map((okr, index) => (
+                                        <div key={index} className="p-4 border rounded-lg bg-card/50">
+                                        <h4 className="font-semibold text-lg">{okr.objective}</h4>
+                                        <ul className="list-disc list-inside mt-2 text-muted-foreground space-y-1">
+                                            {okr.keyResults.map((kr, i) => <li key={i}>{kr}</li>)}
+                                        </ul>
+                                        </div>
+                                    ))}
+                                </CardContent>
+                            </Card>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-6">
+                                <div className="space-y-6">
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="flex items-center gap-3 font-headline">
+                                                <User className="h-6 w-6 text-primary" />
+                                                Multi-Layered Commander
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="text-muted-foreground">{structure.commander}</p>
+                                        </CardContent>
+                                    </Card>
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="flex items-center gap-3 font-headline">
+                                                <Cpu className="h-6 w-6 text-primary" />
+                                                AI-Core Base
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="text-muted-foreground">{structure.aiCore}</p>
+                                        </CardContent>
+                                    </Card>
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="flex items-center gap-3 font-headline">
+                                                <ShieldQuestion className="h-6 w-6 text-primary" />
+                                                Advisory Council
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <Accordion type="multiple" defaultValue={structure.advisoryCouncil.map((_,i) => `advisor-${i}`)} className="print-visible-accordion">
+                                                {structure.advisoryCouncil.map((advisor, index) => (
+                                                    <AccordionItem key={index} value={`advisor-${index}`}>
+                                                        <AccordionTrigger className="text-base font-semibold">
+                                                        <div className="flex items-center gap-3">
+                                                            {getIconForRole(advisor.role)}
+                                                            {advisor.role}
+                                                        </div>
+                                                        </AccordionTrigger>
+                                                        <AccordionContent className="pt-2 text-sm">
+                                                        <p className="text-muted-foreground">{advisor.description}</p>
+                                                        </AccordionContent>
+                                                    </AccordionItem>
+                                                ))}
+                                            </Accordion>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                                <div className="space-y-6">
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="flex items-center gap-3 font-headline">
+                                                <Users2 className="h-6 w-6 text-primary" />
+                                                C-Level Board
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <Accordion type="multiple" defaultValue={structure.cLevelBoard.map((_,i) => `clevel-${i}`)} className="print-visible-accordion">
+                                                {structure.cLevelBoard.map((role, index) => (
+                                                    <AccordionItem key={index} value={`clevel-${index}`}>
+                                                        <AccordionTrigger className="text-base font-semibold">
+                                                            {role.role}
+                                                        </AccordionTrigger>
+                                                        <AccordionContent className="pt-2 text-sm text-muted-foreground">
+                                                            {role.description}
+                                                        </AccordionContent>
+                                                    </AccordionItem>
+                                                ))}
+                                            </Accordion>
+                                        </CardContent>
+                                    </Card>
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="flex items-center gap-3 font-headline">
+                                                <Milestone className="h-6 w-6 text-primary" />
+                                                Project Management Framework
+                                            </CardTitle>
+                                            <CardDescription>{structure.projectManagementFramework.methodology}</CardDescription>
+                                        </CardHeader>
+                                        <CardContent>
+                                        <Accordion type="multiple" defaultValue={structure.projectManagementFramework.phases.map((_,i) => `phase-${i}`)} className="print-visible-accordion">
+                                                {structure.projectManagementFramework.phases.map((phase, index) => (
+                                                    <AccordionItem key={index} value={`phase-${index}`}>
+                                                        <AccordionTrigger className="text-base font-semibold">{phase.phaseName}</AccordionTrigger>
+                                                        <AccordionContent className="pt-2 text-sm space-y-3">
+                                                        <p className="text-muted-foreground">{phase.description}</p>
+                                                        <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                                                            {phase.keyActivities.map((activity, i) => <li key={i}>{activity}</li>)}
+                                                        </ul>
+                                                        </AccordionContent>
+                                                    </AccordionItem>
+                                                ))}
+                                            </Accordion>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            </div>
+
                             <Card>
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-3 font-headline">
-                                        <User className="h-6 w-6 text-primary" />
-                                        Multi-Layered Commander
-                                    </CardTitle>
+                                    <CardTitle className="font-headline">AI-Powered Departments</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="text-muted-foreground">{structure.commander}</p>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-3 font-headline">
-                                        <Cpu className="h-6 w-6 text-primary" />
-                                        AI-Core Base
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-muted-foreground">{structure.aiCore}</p>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-3 font-headline">
-                                        <ShieldQuestion className="h-6 w-6 text-primary" />
-                                        Advisory Council
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                <Accordion type="multiple" defaultValue={structureAccordionItems} className="print-visible">
-                                        {structure.advisoryCouncil.map((advisor, index) => (
-                                            <AccordionItem key={index} value={`advisor-${index}`}>
-                                                <AccordionTrigger className="text-base font-semibold">
-                                                <div className="flex items-center gap-3">
-                                                    {getIconForRole(advisor.role)}
-                                                    {advisor.role}
-                                                </div>
-                                                </AccordionTrigger>
-                                                <AccordionContent className="pt-2 text-sm">
-                                                <p className="text-muted-foreground">{advisor.description}</p>
+                                    <Accordion type="multiple" defaultValue={structure.departments.map(d => d.name)} className="w-full print-visible-accordion">
+                                        {structure.departments.map((dept, index) => (
+                                            <AccordionItem key={index} value={dept.name}>
+                                                <AccordionTrigger className="text-lg font-semibold">{dept.name}</AccordionTrigger>
+                                                <AccordionContent className="pt-2 text-base space-y-6">
+                                                    <div>
+                                                        <h4 className="font-semibold text-foreground mb-1">Function</h4>
+                                                        <p className="text-muted-foreground whitespace-pre-line">{dept.function}</p>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-semibold text-foreground mb-1">AI Integration</h4>
+                                                        <p className="text-muted-foreground whitespace-pre-line">{dept.aiIntegration}</p>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-semibold text-foreground mb-2">Department KPIs</h4>
+                                                        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                                                        {dept.kpis.map((kpi, i) => (
+                                                            <div key={i} className="p-3 border rounded-lg bg-background/50">
+                                                            <h5 className="font-bold">{kpi.kpi}</h5>
+                                                            <p className="text-sm text-muted-foreground mt-1">Target: {kpi.target}</p>
+                                                            </div>
+                                                        ))}
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-semibold text-foreground mb-2">AI Staff & Personas</h4>
+                                                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                                        {dept.staff.map((staff, i) => (
+                                                            <div key={i} className="p-4 border rounded-lg bg-background/50">
+                                                            <h5 className="font-bold">{staff.role}</h5>
+                                                            <p className="text-sm text-muted-foreground italic mt-1">{staff.persona}</p>
+                                                            </div>
+                                                        ))}
+                                                        </div>
+                                                    </div>
                                                 </AccordionContent>
                                             </AccordionItem>
                                         ))}
                                     </Accordion>
                                 </CardContent>
                             </Card>
-                        </div>
-                        <div className="space-y-6">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-3 font-headline">
-                                        <Users2 className="h-6 w-6 text-primary" />
-                                        C-Level Board
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                <Accordion type="multiple" defaultValue={structureAccordionItems} className="print-visible">
-                                    {structure.cLevelBoard.map((role, index) => (
-                                        <AccordionItem key={index} value={`clevel-${index}`}>
-                                            <AccordionTrigger className="text-base font-semibold">
-                                                {role.role}
-                                            </AccordionTrigger>
-                                            <AccordionContent className="pt-2 text-sm text-muted-foreground">
-                                                {role.description}
-                                            </AccordionContent>
-                                        </AccordionItem>
-                                    ))}
-                                </Accordion>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-3 font-headline">
-                                        <Milestone className="h-6 w-6 text-primary" />
-                                        Project Management Framework
-                                    </CardTitle>
-                                    <CardDescription>{structure.projectManagementFramework.methodology}</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                <Accordion type="multiple" defaultValue={structureAccordionItems} className="print-visible">
-                                        {structure.projectManagementFramework.phases.map((phase, index) => (
-                                            <AccordionItem key={index} value={`phase-${index}`}>
-                                                <AccordionTrigger className="text-base font-semibold">{phase.phaseName}</AccordionTrigger>
-                                                <AccordionContent className="pt-2 text-sm space-y-3">
-                                                <p className="text-muted-foreground">{phase.description}</p>
-                                                <ul className="list-disc list-inside text-muted-foreground space-y-1">
-                                                    {phase.keyActivities.map((activity, i) => <li key={i}>{activity}</li>)}
-                                                </ul>
-                                                </AccordionContent>
-                                            </AccordionItem>
-                                        ))}
-                                    </Accordion>
-                                </CardContent>
-                            </Card>
-                        </div>
-                        </div>
-
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="font-headline">AI-Powered Departments</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <Accordion type="multiple" defaultValue={structureAccordionItems} className="w-full print-visible">
-                                    {structure.departments.map((dept, index) => (
-                                        <AccordionItem key={index} value={`dept-${index}`}>
-                                            <AccordionTrigger className="text-lg font-semibold">{dept.name}</AccordionTrigger>
-                                            <AccordionContent className="pt-2 text-base space-y-6">
-                                                <div>
-                                                    <h4 className="font-semibold text-foreground mb-1">Function</h4>
-                                                    <p className="text-muted-foreground whitespace-pre-line">{dept.function}</p>
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-semibold text-foreground mb-1">AI Integration</h4>
-                                                    <p className="text-muted-foreground whitespace-pre-line">{dept.aiIntegration}</p>
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-semibold text-foreground mb-2">Department KPIs</h4>
-                                                    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                                                    {dept.kpis.map((kpi, i) => (
-                                                        <div key={i} className="p-3 border rounded-lg bg-background/50">
-                                                        <h5 className="font-bold">{kpi.kpi}</h5>
-                                                        <p className="text-sm text-muted-foreground mt-1">Target: {kpi.target}</p>
-                                                        </div>
-                                                    ))}
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-semibold text-foreground mb-2">AI Staff & Personas</h4>
-                                                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                                    {dept.staff.map((staff, i) => (
-                                                        <div key={i} className="p-4 border rounded-lg bg-background/50">
-                                                        <h5 className="font-bold">{staff.role}</h5>
-                                                        <p className="text-sm text-muted-foreground italic mt-1">{staff.persona}</p>
-                                                        </div>
-                                                    ))}
-                                                    </div>
-                                                </div>
-                                            </AccordionContent>
-                                        </AccordionItem>
-                                    ))}
-                                </Accordion>
-                            </CardContent>
-                        </Card>
+                        </Accordion>
                     </CardContent>
                  </Card>
             </div>
@@ -406,7 +412,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                         <CardTitle className="font-headline">Strategic Pillars</CardTitle>
                     </CardHeader>
                     <CardContent className="p-6">
-                        <Accordion type="multiple" defaultValue={strategyAccordionItems} className="print-visible">
+                        <Accordion type="multiple" defaultValue={strategyAccordionItems} className="print-visible-accordion">
                         <AccordionItem value="marketing">
                             <AccordionTrigger className="text-lg font-semibold">
                             <div className="flex items-center gap-3">
@@ -510,14 +516,14 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                             <Accordion type="multiple" defaultValue={financialAccordionItems} className="print-visible-accordion">
                                 <Card>
                                     <CardHeader>
                                         <CardTitle className="font-headline">Capital Expenditures (CAPEX)</CardTitle>
                                         <CardDescription>One-time costs to get the business started.</CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <Accordion type="multiple" defaultValue={financialAccordionItems} className="print-visible">
+                                        <Accordion type="multiple" defaultValue={financialAccordionItems} className="print-visible-accordion">
                                             {actionPlan.financials.capex.map((item, index) => (
                                                 <AccordionItem key={index} value={`capex-${index}`}>
                                                     <AccordionTrigger className="text-base font-semibold">
@@ -540,7 +546,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                         <CardDescription>Recurring monthly or annual costs to run the business.</CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <Accordion type="multiple" defaultValue={financialAccordionItems} className="print-visible">
+                                        <Accordion type="multiple" defaultValue={financialAccordionItems} className="print-visible-accordion">
                                             {actionPlan.financials.opex.map((item, index) => (
                                                 <AccordionItem key={index} value={`opex-${index}`}>
                                                     <AccordionTrigger className="text-base font-semibold">
@@ -557,21 +563,23 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                         </Accordion>
                                     </CardContent>
                                 </Card>
-                            </div>
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="font-headline">Investment Options</CardTitle>
-                                    <CardDescription>Potential ways to fund your new venture.</CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    {actionPlan.financials.investmentOptions.map((option, index) => (
-                                        <div key={index} className="p-4 border rounded-lg bg-card/50">
-                                        <h4 className="font-semibold text-lg">{option.type} - <span className="text-primary">{option.amount}</span></h4>
-                                        <p className="text-muted-foreground mt-2">{option.description}</p>
-                                        </div>
-                                    ))}
-                                </CardContent>
-                            </Card>
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle className="font-headline">Investment Options</CardTitle>
+                                        <CardDescription>Potential ways to fund your new venture.</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        {actionPlan.financials.investmentOptions.map((option, index) => (
+                                            <AccordionItem key={index} value={`invest-${index}`} className="border-b-0">
+                                                <div className="p-4 border rounded-lg bg-card/50">
+                                                    <h4 className="font-semibold text-lg">{option.type} - <span className="text-primary">{option.amount}</span></h4>
+                                                    <p className="text-muted-foreground mt-2">{option.description}</p>
+                                                </div>
+                                            </AccordionItem>
+                                        ))}
+                                    </CardContent>
+                                </Card>
+                            </Accordion>
                         </CardContent>
                     </Card>
                 </div>

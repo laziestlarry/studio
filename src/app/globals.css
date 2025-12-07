@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -95,26 +96,28 @@
     page-break-after: always;
   }
 
-  /* Ensure accordion content is visible */
   .print-visible-accordion [data-state="closed"] {
     display: block !important;
-    height: auto !important;
-    opacity: 1 !important;
-    visibility: visible !important;
   }
-   .print-visible-accordion [data-state="closed"] > div {
-     overflow: visible !important;
-  }
-   .print-visible-accordion [data-radix-collapsible-content] {
+  .print-visible-accordion [data-radix-accordion-content] {
     display: block !important;
+    overflow: visible !important;
+    height: auto !important;
+    animation: none !important;
+  }
+  .print-visible-accordion [data-radix-accordion-content] > div {
+    overflow: visible !important;
+  }
+  .print-visible-accordion [data-state='open'] > svg,
+  .print-visible-accordion [data-state='closed'] > svg {
+      display: none !important;
   }
 
-  /* Ensure all tab content is visible for printing */
-  .print-visible-tabs > [role="tabpanel"] {
+
+  .print-visible-tabs > [role="tabpanel"][data-state="inactive"] {
     display: block !important;
     page-break-before: always;
   }
-  .print-visible-tabs > [role="tabpanel"][data-state="inactive"] {
-    display: block !important;
-  }
 }
+
+    

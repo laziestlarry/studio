@@ -24,6 +24,7 @@ interface OpportunityDashboardProps {
   chartData: ChartData | null;
   executiveBrief: ExecutiveBrief | null;
   onBack: () => void;
+  isPrinting?: boolean;
   children?: React.ReactNode;
 }
 
@@ -34,7 +35,7 @@ const chartConfig = {
   },
 };
 
-export default function OpportunityDashboard({ opportunity, analysis, strategy, structure, actionPlan, chartData, executiveBrief, onBack, children }: OpportunityDashboardProps) {
+export default function OpportunityDashboard({ opportunity, analysis, strategy, structure, actionPlan, chartData, executiveBrief, onBack, isPrinting, children }: OpportunityDashboardProps) {
   const initialTasks = actionPlan ? actionPlan.actionPlan.flatMap(category => category.tasks) : [];
   const [tasks, setTasks] = useState(initialTasks);
   const [currentView, setCurrentView] = useState('list');
@@ -128,7 +129,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
       )}
 
 
-      <Tabs defaultValue="analysis" className="w-full">
+      <Tabs defaultValue="analysis" className={cn("w-full", isPrinting && 'print-visible-tabs')}>
         <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-3 lg:grid-cols-5 print:hidden">
           <TabsTrigger value="analysis">
             <LineChart className="mr-2 h-4 w-4" /> Market Analysis
@@ -148,7 +149,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
         </TabsList>
 
         {children}
-        <div className="print-visible-tabs">
+        <div className={cn(isPrinting && 'print-visible-tabs')}>
         <TabsContent value="analysis" className="mt-6 print:break-after-page">
           <div className="space-y-6">
             <Card className="print:border-none print:shadow-none">
@@ -159,7 +160,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Accordion type="multiple" defaultValue={analysisAccordionItems} className="w-full space-y-4 print-visible-accordion">
+                <Accordion type="multiple" defaultValue={isPrinting ? analysisAccordionItems : undefined} className={cn("w-full space-y-4", isPrinting && "print-visible-accordion")}>
                     <AccordionItem value="demand" className="border rounded-lg">
                         <AccordionTrigger className="p-4 font-semibold text-lg flex items-center gap-3">
                             <Users className="h-5 w-5 text-primary" /> Demand Forecast
@@ -219,7 +220,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        <Accordion type="multiple" defaultValue={structureAccordionItems} className="print-visible-accordion">
+                        <Accordion type="multiple" defaultValue={isPrinting ? structureAccordionItems: undefined} className={cn(isPrinting && "print-visible-accordion")}>
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="font-headline">Corporate OKRs</CardTitle>
@@ -268,7 +269,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                             </CardTitle>
                                         </CardHeader>
                                         <CardContent>
-                                            <Accordion type="multiple" defaultValue={structure.advisoryCouncil.map((_,i) => `advisor-${i}`)} className="print-visible-accordion">
+                                            <Accordion type="multiple" defaultValue={isPrinting ? structure.advisoryCouncil.map((_,i) => `advisor-${i}`) : undefined} className={cn(isPrinting && "print-visible-accordion")}>
                                                 {structure.advisoryCouncil.map((advisor, index) => (
                                                     <AccordionItem key={index} value={`advisor-${index}`}>
                                                         <AccordionTrigger className="text-base font-semibold">
@@ -295,7 +296,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                             </CardTitle>
                                         </CardHeader>
                                         <CardContent>
-                                            <Accordion type="multiple" defaultValue={structure.cLevelBoard.map((_,i) => `clevel-${i}`)} className="print-visible-accordion">
+                                            <Accordion type="multiple" defaultValue={isPrinting ? structure.cLevelBoard.map((_,i) => `clevel-${i}`) : undefined} className={cn(isPrinting && "print-visible-accordion")}>
                                                 {structure.cLevelBoard.map((role, index) => (
                                                     <AccordionItem key={index} value={`clevel-${index}`}>
                                                         <AccordionTrigger className="text-base font-semibold">
@@ -318,7 +319,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                             <CardDescription>{structure.projectManagementFramework.methodology}</CardDescription>
                                         </CardHeader>
                                         <CardContent>
-                                        <Accordion type="multiple" defaultValue={structure.projectManagementFramework.phases.map((_,i) => `phase-${i}`)} className="print-visible-accordion">
+                                        <Accordion type="multiple" defaultValue={isPrinting ? structure.projectManagementFramework.phases.map((_,i) => `phase-${i}`) : undefined} className={cn(isPrinting && "print-visible-accordion")}>
                                                 {structure.projectManagementFramework.phases.map((phase, index) => (
                                                     <AccordionItem key={index} value={`phase-${index}`}>
                                                         <AccordionTrigger className="text-base font-semibold">{phase.phaseName}</AccordionTrigger>
@@ -341,7 +342,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                     <CardTitle className="font-headline">AI-Powered Departments</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <Accordion type="multiple" defaultValue={structure.departments.map(d => d.name)} className="w-full print-visible-accordion">
+                                    <Accordion type="multiple" defaultValue={isPrinting ? structure.departments.map(d => d.name) : undefined} className={cn("w-full", isPrinting && "print-visible-accordion")}>
                                         {structure.departments.map((dept, index) => (
                                             <AccordionItem key={index} value={dept.name}>
                                                 <AccordionTrigger className="text-lg font-semibold">{dept.name}</AccordionTrigger>
@@ -412,7 +413,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                         <CardTitle className="font-headline">Strategic Pillars</CardTitle>
                     </CardHeader>
                     <CardContent className="p-6">
-                        <Accordion type="multiple" defaultValue={strategyAccordionItems} className="print-visible-accordion">
+                        <Accordion type="multiple" defaultValue={isPrinting ? strategyAccordionItems : undefined} className={cn(isPrinting && "print-visible-accordion")}>
                         <AccordionItem value="marketing">
                             <AccordionTrigger className="text-lg font-semibold">
                             <div className="flex items-center gap-3">
@@ -516,14 +517,14 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                             <Accordion type="multiple" defaultValue={financialAccordionItems} className="print-visible-accordion">
+                             <Accordion type="multiple" defaultValue={isPrinting ? financialAccordionItems : undefined} className={cn(isPrinting && "print-visible-accordion")}>
                                 <Card>
                                     <CardHeader>
                                         <CardTitle className="font-headline">Capital Expenditures (CAPEX)</CardTitle>
                                         <CardDescription>One-time costs to get the business started.</CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <Accordion type="multiple" defaultValue={financialAccordionItems} className="print-visible-accordion">
+                                        <Accordion type="multiple" defaultValue={isPrinting ? actionPlan.financials.capex.map((_, i) => `capex-${i}`) : undefined} className={cn(isPrinting && "print-visible-accordion")}>
                                             {actionPlan.financials.capex.map((item, index) => (
                                                 <AccordionItem key={index} value={`capex-${index}`}>
                                                     <AccordionTrigger className="text-base font-semibold">
@@ -546,7 +547,7 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
                                         <CardDescription>Recurring monthly or annual costs to run the business.</CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <Accordion type="multiple" defaultValue={financialAccordionItems} className="print-visible-accordion">
+                                        <Accordion type="multiple" defaultValue={isPrinting ? actionPlan.financials.opex.map((_, i) => `opex-${i}`) : undefined} className={cn(isPrinting && "print-visible-accordion")}>
                                             {actionPlan.financials.opex.map((item, index) => (
                                                 <AccordionItem key={index} value={`opex-${index}`}>
                                                     <AccordionTrigger className="text-base font-semibold">

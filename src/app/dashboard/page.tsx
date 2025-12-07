@@ -66,6 +66,7 @@ const StrategyStep = ({ strategy, onNext, isLoading }: { strategy: Strategy | nu
 export default function DashboardPage() {
   const [currentStep, setCurrentStep] = useState<Step>('initial');
   const [isLoading, setIsLoading] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [structure, setStructure] = useState<BusinessStructure | null>(null);
@@ -207,7 +208,11 @@ export default function DashboardPage() {
   };
 
   const handlePrint = () => {
-    window.print();
+    setIsPrinting(true);
+    setTimeout(() => {
+        window.print();
+        setIsPrinting(false);
+    }, 100);
   }
   
   const renderInitialState = () => {
@@ -286,6 +291,7 @@ export default function DashboardPage() {
             chartData={chartData}
             executiveBrief={executiveBrief}
             onBack={handleBackToOpportunities}
+            isPrinting={isPrinting}
         />
     )
   }

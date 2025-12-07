@@ -96,19 +96,16 @@
   }
 
   /* Ensure accordion content is visible */
-  .print-visible [data-state="closed"] {
+  .print-visible-accordion [data-state="closed"] {
     display: block !important;
     height: auto !important;
     opacity: 1 !important;
     visibility: visible !important;
   }
-  .print-visible [data-state="closed"] > div {
+   .print-visible-accordion [data-state="closed"] > div {
      overflow: visible !important;
   }
-  .print-visible [data-radix-collapsible-content] {
-    display: block !important;
-  }
-   .print-visible-accordion [data-state="closed"] {
+   .print-visible-accordion [data-radix-collapsible-content] {
     display: block !important;
   }
 

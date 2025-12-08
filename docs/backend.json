@@ -1,0 +1,186 @@
+{
+  "entities": {
+    "Opportunity": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Opportunity",
+      "type": "object",
+      "description": "Represents a business opportunity identified by the AI.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Opportunity entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "Name of the opportunity."
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the opportunity."
+        },
+        "marketAnalysisId": {
+          "type": "string",
+          "description": "Reference to MarketAnalysis. (Relationship: Opportunity 1:1 MarketAnalysis)"
+        },
+        "strategyId": {
+          "type": "string",
+          "description": "Reference to Strategy. (Relationship: Opportunity 1:1 Strategy)"
+        },
+        "priorityScore": {
+          "type": "number",
+          "description": "AI-assigned score indicating the opportunity's priority."
+        },
+        "opportunityType": {
+          "type": "string",
+          "description": "The type of opportunity identified (e.g., side-hustle, passive income, etc.)."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the opportunity was identified.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "marketAnalysisId",
+        "strategyId",
+        "priorityScore",
+        "opportunityType",
+        "createdAt"
+      ]
+    },
+    "MarketAnalysis": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "MarketAnalysis",
+      "type": "object",
+      "description": "Represents the market analysis data for a specific opportunity.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the MarketAnalysis entity."
+        },
+        "demandForecast": {
+          "type": "string",
+          "description": "Forecast of the demand for the opportunity."
+        },
+        "competitiveLandscape": {
+          "type": "string",
+          "description": "Analysis of the competitive landscape."
+        },
+        "revenueProjection": {
+          "type": "number",
+          "description": "Projected revenue for the opportunity."
+        }
+      },
+      "required": [
+        "id",
+        "demandForecast",
+        "competitiveLandscape",
+        "revenueProjection"
+      ]
+    },
+    "Strategy": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Strategy",
+      "type": "object",
+      "description": "Represents the business strategy generated for a specific opportunity.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Strategy entity."
+        },
+        "marketingTactics": {
+          "type": "string",
+          "description": "Recommended marketing tactics."
+        },
+        "operationalWorkflows": {
+          "type": "string",
+          "description": "Recommended operational workflows."
+        },
+        "financialForecasts": {
+          "type": "string",
+          "description": "Financial forecasts for the strategy."
+        }
+      },
+      "required": [
+        "id",
+        "marketingTactics",
+        "operationalWorkflows",
+        "financialForecasts"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}/opportunities/{opportunityId}",
+        "definition": {
+          "entityName": "Opportunity",
+          "schema": {
+            "$ref": "#/backend/entities/Opportunity"
+          },
+          "description": "Stores business opportunities identified by the AI for a specific user. Includes 'ownerId' to enforce ownership.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The ID of the user who owns the opportunity."
+            },
+            {
+              "name": "opportunityId",
+              "description": "The ID of the business opportunity."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/marketAnalyses/{marketAnalysisId}",
+        "definition": {
+          "entityName": "MarketAnalysis",
+          "schema": {
+            "$ref": "#/backend/entities/MarketAnalysis"
+          },
+          "description": "Stores market analysis data for a specific opportunity. Includes 'ownerId' to enforce ownership.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The ID of the user who owns the market analysis."
+            },
+            {
+              "name": "marketAnalysisId",
+              "description": "The ID of the market analysis."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/strategies/{strategyId}",
+        "definition": {
+          "entityName": "Strategy",
+          "schema": {
+            "$ref": "#/backend/entities/Strategy"
+          },
+          "description": "Stores business strategies generated for a specific opportunity. Includes 'ownerId' to enforce ownership.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The ID of the user who owns the strategy."
+            },
+            {
+              "name": "strategyId",
+              "description": "The ID of the strategy."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to store business opportunities, market analyses, and strategies generated by an AI. It prioritizes authorization independence and supports efficient list operations through structural segregation. User-specific data is stored under their respective user IDs, ensuring secure and scalable data management.\n\nOpportunities, market analyses, and strategies are structured as subcollections under each user. This approach provides a clear hierarchy and simplifies security rules. Specifically, storing data within user-specific subcollections inherently provides a level of ownership, eliminating the need for complex authorization logic based on parent documents.\n\nAuthorization Independence:\nEach document within the `opportunities`, `marketAnalyses`, and `strategies` collections will contain all information necessary for authorization, avoiding the need for `get()` calls to parent documents. For example, the `opportunities` documents could include a `ownerId` field to simplify access control.\n\nQAPs Support:\nThe structure supports secure `list` operations by segregating data into user-specific collections. Rules can easily enforce that a user can only list opportunities, market analyses, and strategies under their own user ID."
+  }
+}

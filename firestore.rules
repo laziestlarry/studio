@@ -1,0 +1,109 @@
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model. All data is considered private and is only accessible by the authenticated user who created it. There are no public or shared collections.
+ *
+ * Data Structure: The data is organized hierarchically. All user-specific data, including opportunities, market analyses, and strategies, is stored in separate subcollections under a main `/users/{userId}` path. This structural segregation is key to the security model.
+ *
+ * Key Security Decisions:
+ * - User Isolation: Users can only read and write data within their own data tree (i.e., under `/users/{their_own_uid}`).
+ * - No Global Access: Listing users or any other top-level data is strictly forbidden.
+ * - Authorization Integrity: All documents must contain an `ownerId` field that matches the `userId` in the path. This rule is enforced on document creation and the `ownerId` is immutable, preventing ownership from being changed.
+ *
+ * Denormalization for Authorization: To ensure fast and secure authorization, every document within a user's subcollection (e.g., an 'opportunity') must have an `ownerId` field. This denormalized field allows rules to verify ownership without performing costly and slow `get()` calls on parent documents.
+ *
+ * Structural Segregation: The use of user-specific subcollections (e.g., `/users/{userId}/opportunities`) is a deliberate design choice. It provides a more secure and performant way to manage user-private data compared to a single large collection with owner-based query rules.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper Functions
+    // ------------------------------------
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently signed-in user's UID matches the given userId.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Verifies that the user is the owner and that the document already exists.
+     * Used for safe update and delete operations.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * Validates that the user is the owner and that the new document's
+     * internal 'ownerId' field correctly matches the user's UID.
+     * Enforces relational integrity on creation.
+     */
+    function isNewOwnerAndConsistent(userId) {
+      return isOwner(userId) && request.resource.data.ownerId == userId;
+    }
+
+    /**
+     * Validates that the 'ownerId' field is not being changed during an update.
+     * Enforces immutability of ownership.
+     */
+    function isOwnerIdImmutable() {
+      return request.resource.data.ownerId == resource.data.ownerId;
+    }
+
+    // Collection Rules
+    // ------------------------------------
+
+    /**
+     * @description A user can manage their own opportunities, but cannot see anyone else's.
+     * @path /users/{userId}/opportunities/{opportunityId}
+     * @allow A user (uid: 'user123') can (create) a document at '/users/user123/opportunities/opp456' if the document data includes `ownerId: 'user123'`.
+     * @deny A user (uid: 'user123') cannot (get) a document at '/users/userABC/opportunities/opp789'.
+     * @principle Restricts access to a user's own data tree and enforces ownership integrity via a denormalized `ownerId` field.
+     */
+    match /users/{userId}/opportunities/{opportunityId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isNewOwnerAndConsistent(userId);
+      allow update: if isExistingOwner(userId) && isOwnerIdImmutable();
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description A user can manage their own market analyses, but cannot see anyone else's.
+     * @path /users/{userId}/marketAnalyses/{marketAnalysisId}
+     * @allow A user (uid: 'user123') can (list) documents at '/users/user123/marketAnalyses'.
+     * @deny A user (uid: 'user123') cannot (update) a document at '/users/userABC/marketAnalyses/ma789'.
+     * @principle Restricts access to a user's own data tree and enforces ownership integrity via a denormalized `ownerId` field.
+     */
+    match /users/{userId}/marketAnalyses/{marketAnalysisId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isNewOwnerAndConsistent(userId);
+      allow update: if isExistingOwner(userId) && isOwnerIdImmutable();
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description A user can manage their own strategies, but cannot see anyone else's.
+     * @path /users/{userId}/strategies/{strategyId}
+     * @allow A user (uid: 'user123') can (delete) their own document at '/users/user123/strategies/strat456'.
+     * @deny A user (uid: 'user123') cannot (create) a document at '/users/user123/strategies/strat456' if the document data has `ownerId: 'userABC'`.
+     * @principle Restricts access to a user's own data tree and enforces ownership integrity via a denormalized `ownerId` field.
+     */
+    match /users/{userId}/strategies/{strategyId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isNewOwnerAndConsistent(userId);
+      allow update: if isExistingOwner(userId) && isOwnerIdImmutable();
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}

@@ -132,6 +132,7 @@ const prompt = ai.definePrompt({
   name: 'generateBusinessStructurePrompt',
   input: {schema: GenerateBusinessStructureInputSchema},
   output: {schema: GenerateBusinessStructureOutputSchema},
+  model: 'gemini-1.5-flash-latest',
   prompt: `You are an expert in organizational design and AI-driven business automation. For the given business opportunity, design a detailed organizational structure for a fully automated, AI-powered agency based on a sophisticated AI Delegation Model.
 
 Business Opportunity Name: {{{opportunityName}}}

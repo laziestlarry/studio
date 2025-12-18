@@ -36,6 +36,7 @@ const prompt = ai.definePrompt({
   name: 'generateChartDataPrompt',
   input: {schema: GenerateChartDataInputSchema},
   output: {schema: GenerateChartDataOutputSchema},
+  model: 'gemini-1.5-flash-latest',
   prompt: `You are an expert financial data analyst. Your task is to parse a text-based financial forecast and extract a structured array of projected revenue data for the first 12 months. The output must be clean, structured JSON suitable for charting.
 
 Financial Forecast Text: {{{financialForecasts}}}

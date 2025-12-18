@@ -45,6 +45,7 @@ const prompt = ai.definePrompt({
   name: 'analyzeMarketOpportunityPrompt',
   input: {schema: AnalyzeMarketOpportunityInputSchema},
   output: {schema: AnalyzeMarketOpportunityOutputSchema},
+  model: 'gemini-1.5-flash-latest',
   prompt: `You are an expert market analyst. Given the description of a market opportunity, provide a demand forecast, an analysis of the competitive landscape, and a projection of the potential revenue.
 
 Market Opportunity Description: {{{opportunityDescription}}}`,

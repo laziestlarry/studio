@@ -60,6 +60,7 @@ const prompt = ai.definePrompt({
   name: 'rankBusinessOpportunitiesPrompt',
   input: {schema: RankBusinessOpportunitiesInputSchema},
   output: {schema: RankBusinessOpportunitiesOutputSchema},
+  model: 'gemini-1.5-flash-latest',
   prompt: `You are an expert business analyst. Given a list of business opportunities and a strategic focus, rank them in order of preference. The ranking should be based on a balanced assessment of which opportunities best align with the stated focus.
 
 Provide a clear rationale for each rank that explains how the opportunity's potential, risk, and return speed contribute to its alignment with the strategic focus. The output should be a ranked list of the same opportunities provided in the input, with additional 'rank' and 'rationale' fields.

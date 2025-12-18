@@ -42,6 +42,7 @@ const prompt = ai.definePrompt({
   name: 'generateBuildModeAdvicePrompt',
   input: {schema: GenerateBuildModeAdviceInputSchema},
   output: {schema: GenerateBuildModeAdviceOutputSchema},
+  model: 'gemini-1.5-flash-latest',
   prompt: `You are an expert business consultant AI. Given a foundational business strategy, your job is to provide a detailed comparison and strategic advice on two potential implementation paths: "in-house" and "out-sourced".
 
 Analyze the provided business strategy and generate a structured comparison.

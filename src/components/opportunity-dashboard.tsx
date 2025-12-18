@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Opportunity, Analysis, Strategy, BusinessStructure, ActionPlan, Task, ChartData, ExecutiveBrief } from '@/lib/types';
@@ -574,5 +573,3 @@ export default function OpportunityDashboard({ opportunity, analysis, strategy, 
     </div>
   );
 }
-
-    

@@ -35,13 +35,3 @@ const GenerateBuildModeAdviceOutputSchema = z.object({
     outSourced: BuildModeAnalysis,
 });
 export type BuildModeAdvice = z.infer<typeof GenerateBuildModeAdviceOutputSchema>;
-
-
-export const GenerateBuildModeAdviceInputSchema = z.object({
-  businessStrategy: z.object({
-    marketingTactics: z.string(),
-    operationalWorkflows: z.string(),
-    financialForecasts: z.string(),
-  }),
-});
-export type GenerateBuildModeAdviceInput = z.infer<typeof GenerateBuildModeAdviceInputSchema>;

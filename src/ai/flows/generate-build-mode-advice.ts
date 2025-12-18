@@ -10,9 +10,10 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import type { GenerateBuildModeAdviceInput, GenerateBuildModeAdviceOutput } from '@/lib/types';
+import type { GenerateBuildModeAdviceInput, BuildModeAdvice } from '@/lib/types';
 
-const BuildModeAnalysis = z.object({
+
+const BuildModeAnalysisSchema = z.object({
     costBenefitAnalysis: z.string().describe('A detailed cost-benefit analysis of this build mode.'),
     resourceMetrics: z.string().describe('Key metrics for resource allocation (e.g., estimated team size, required capital, time to market).'),
     strategicRecommendation: z.string().describe('A strategic recommendation on when to choose this mode.'),
@@ -27,13 +28,13 @@ const GenerateBuildModeAdviceInputSchema = z.object({
 });
 
 const GenerateBuildModeAdviceOutputSchema = z.object({
-    inHouse: BuildModeAnalysis,
-    outSourced: BuildModeAnalysis,
+    inHouse: BuildModeAnalysisSchema,
+    outSourced: BuildModeAnalysisSchema,
 });
 
 export async function generateBuildModeAdvice(
   input: GenerateBuildModeAdviceInput
-): Promise<GenerateBuildModeAdviceOutput> {
+): Promise<BuildModeAdvice> {
   return generateBuildModeAdviceFlow(input);
 }
 
@@ -41,6 +42,7 @@ const prompt = ai.definePrompt({
   name: 'generateBuildModeAdvicePrompt',
   input: {schema: GenerateBuildModeAdviceInputSchema},
   output: {schema: GenerateBuildModeAdviceOutputSchema},
+  model: 'gemini-1.5-flash-latest',
   prompt: `You are an expert business consultant AI. Given a foundational business strategy, your job is to provide a detailed comparison and strategic advice on two potential implementation paths: "in-house" and "out-sourced".
 
 Analyze the provided business strategy and generate a structured comparison.

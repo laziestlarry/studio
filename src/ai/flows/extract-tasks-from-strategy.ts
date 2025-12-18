@@ -96,6 +96,7 @@ const prompt = ai.definePrompt({
   name: 'extractTasksFromStrategyPrompt',
   input: {schema: ExtractTasksFromStrategyInputSchema},
   output: {schema: ExtractTasksFromStrategyOutputSchema},
+  model: 'gemini-1.5-flash-latest',
   prompt: `You are an expert project manager and financial analyst AI. Your job is to take a high-level business strategy and convert it into a comprehensive, actionable project plan and financial estimate, tailored to the specified build mode. The human stakeholder ("Lazy Larry") prefers to be in an observer/approver role.
 
 **Build Mode:** {{{buildMode}}}

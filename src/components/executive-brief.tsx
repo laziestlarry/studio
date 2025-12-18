@@ -1,4 +1,3 @@
-
 'use client';
 
 import type { ExecutiveBrief } from '@/lib/types';

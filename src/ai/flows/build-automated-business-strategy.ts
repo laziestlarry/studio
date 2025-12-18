@@ -53,6 +53,7 @@ const prompt = ai.definePrompt({
   name: 'buildAutomatedBusinessStrategyPrompt',
   input: {schema: BuildAutomatedBusinessStrategyInputSchema},
   output: {schema: BuildAutomatedBusinessStrategyOutputSchema},
+  model: 'gemini-1.5-flash-latest',
   prompt: `You are an expert AI strategist. Based on the following market analysis, generate a comprehensive, build-agnostic business strategy. The strategy must be designed for maximum automation and profit-first optimization. Do NOT make assumptions about whether the business will be built in-house or out-sourced. The strategy should be a high-level foundation that can be implemented using either approach.
 
 **Market Analysis:** {{{marketAnalysis}}}

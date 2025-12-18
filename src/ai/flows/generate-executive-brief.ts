@@ -66,6 +66,7 @@ const prompt = ai.definePrompt({
     actionPlan: z.string(),
   })},
   output: {schema: GenerateExecutiveBriefOutputSchema},
+  model: 'gemini-1.5-flash-latest',
   prompt: `You are a world-class business analyst at a top-tier venture capital firm. Your job is to distill a comprehensive business plan into a single, high-impact "Executive Brief" for the managing partners. Your analysis must be ruthless, concise, and focused on the metrics that matter most for an investment decision.
 
 **Business Opportunity:** {{{opportunityName}}}

@@ -45,6 +45,7 @@ const prompt = ai.definePrompt({
   name: 'prioritizeOnlineBusinessVenturesPrompt',
   input: {schema: PrioritizeOnlineBusinessVenturesInputSchema},
   output: {schema: PrioritizeOnlineBusinessVenturesOutputSchema},
+  model: 'gemini-1.5-flash-latest',
   prompt: `You are an expert in online business and entrepreneurship. Given the following market data, user skills, and risk tolerance, prioritize a list of online business ventures that the user should develop or begin.
 
 Market Data: {{{marketData}}}

@@ -63,6 +63,7 @@ const prompt = ai.definePrompt({
   name: 'identifyPromisingOpportunitiesPrompt',
   input: {schema: IdentifyPromisingOpportunitiesInputSchema},
   output: {schema: IdentifyPromisingOpportunitiesOutputSchema},
+  model: 'gemini-1.5-flash-latest',
   prompt: `You are an AI assistant designed to identify promising online business opportunities based on a matrix of highest potential, low risk, and quick return. Your goal is to find opportunities that can be launched quickly to go from 'idea to income' in days, not months.
 
 If the user provides context, use that as the primary source for analysis. Perform a comprehensive and thorough analysis of the entire document. Do not stop after finding only one or two opportunities.
